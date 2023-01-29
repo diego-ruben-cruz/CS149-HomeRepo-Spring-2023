@@ -3,14 +3,8 @@ Home Repository for all C Projects for the CS 149 Spring course
 
 ## Details
 
-### Instructor: 
+### Instructor: William "Bill" Andreopoulos
 
-William "Bill" Andreopoulos
+### Section: 03
 
-### Section:
-
-03
-
-### Dates and Times:
-
-MonWed 1200 - 1315
+### Dates and Times: MonWed 1200 - 1315
