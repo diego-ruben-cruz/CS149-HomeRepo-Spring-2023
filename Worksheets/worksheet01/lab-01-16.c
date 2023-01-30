@@ -11,6 +11,14 @@
  * diego.cruz@sjsu.edu
  * saim.sheikh@sjsu.edu
  * 
- * Last Modified:
- * Creation Date:
+ * Last Modified: 1/29/2023
+ * Creation Date: 1/29/2023
 */
+#include <stdio.h>
+
+int main(void) {
+
+   printf("  NO PARKING\n");
+   printf("2:00 - 6:00 a.m.\n");
+   return 0;
+}
