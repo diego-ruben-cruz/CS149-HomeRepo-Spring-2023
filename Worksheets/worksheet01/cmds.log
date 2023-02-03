@@ -1,0 +1,28 @@
+    1  sudo wget https;//github.com/shiftkey/desktop/releases/download/release-2.6.3-linux1/GitHubDesktop-linux-2.6.3-linux1.deb
+    2  sudo apt install gcc
+    3  adduser username dingo
+    4  su root
+    5  su -i
+    6  sudo apt install gcc
+    7  sudo apt install make
+    8  sudo apt get install gdebi-core
+    9  sudo apt-get install gdebi-core
+   10  sudo wget https://github.com/shiftkey/desktop/releases/download/release-3.1.1-linux1/GitHubDesktop-linux-3.1.1-linux1.deb
+   11  sudo apt-get install gdebi-core
+   12  sudo gdebi GitHubDesktop-linux-3.1.1-linux1.deb
+   13  sudo apt update
+   14  java --version
+   15  sudo apt install openjdk-17-jre-headless
+   16  cd Desktop/
+   17  cd Documents/
+   18  cd
+   19  cd Documents/
+   20  cd Github/
+   21  cd GitHub
+   22  cd CS149-HomeRepo-Spring-2023
+   23  cd Worksheet
+   24  cd Worksheets
+   25  cd worksheet01
+   26  wget -O out.pdf https://tinyurl.com/yy94jltt
+   27  ls -latr
+   28  history > cmds.log
