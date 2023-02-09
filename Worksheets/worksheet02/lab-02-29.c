@@ -27,17 +27,18 @@
 
 int main(void)
 {
+    // Variables to use and store from user input
     double x;
     double y;
     double z;
 
-    // Takes in the three numbers separated by a space,
-    // Used float instead of zybooks double to save on storage space,
-    // since the program only requires two dec spaces to be displayed.
+    // Takes in the three numbers separated by a space between them
     printf("Please input three numbers (x, y, and z) separated by a space between them: ");
     scanf("%lf %lf %lf", &x, &y, &z);
 
+    // Line used to make things easier when viewing the results of the code being run
     printf("\nBelow are the computations made with your input\n");
+
     // Outputs x to the power of z
     printf("x to the power of z: %0.2lf\n", pow(x, z));
 
@@ -50,5 +51,6 @@ int main(void)
     // prints out complex square root operation.
     printf("Square root of (xy to the power of z): %0.2lf\n", sqrt(pow(x * y, z)));
 
-    return 0;
+    return 0; // Basic exit code for the program since nothing
+              // gets output from main operation
 }
