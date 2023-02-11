@@ -20,6 +20,7 @@ int main(void) {
 	/* Type your code here. */
 	int userNum;
 	int x;
+    printf("Enter two numbers:");
 	scanf("%d %d", &userNum, &x); //User Input: use & to reference memory location of userNum and x when initializing
 	/*need to make  userNum/x once, then result/x, then result1/x--            */
 	/*Example input   2000/2   ,     1000/2         ,  500/2                   */

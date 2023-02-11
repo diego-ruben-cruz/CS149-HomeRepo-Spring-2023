@@ -1,0 +1,16 @@
+  443  date
+  444  pwd 
+  445  cd ~ 
+  446  cd~/Documents/GitHub/CS149-HomeRepo-Spring-2023/Worksheets/worksheet02
+  447  cd Documents
+  448  cd Github
+  449  cd GitHub
+  450  cd CS149-HomeRepo-Spring-2023
+  451  cd Worksheets
+  452  cd worksheet02
+  453  ls -latr
+  454  echo $?
+  455  man ps
+  456  ps aux
+  457  top
+  458  history > worksheet2.log
