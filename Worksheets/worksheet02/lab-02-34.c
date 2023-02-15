@@ -30,4 +30,11 @@ int main(void)
 
     return 0; // Basic exit code for the program since nothing
               // gets output from main operation
+    /**
+     * Test value:
+     * Deeahhgo
+     *
+     * Expected output:
+     * Hello Deeahhgo, and welcome to CS Online!
+     */
 }

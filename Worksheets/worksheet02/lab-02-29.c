@@ -53,4 +53,15 @@ int main(void)
 
     return 0; // Basic exit code for the program since nothing
               // gets output from main operation
+
+    /**
+     * Test values:
+     * 1 2 3
+     *
+     * Expected output:
+     * x to power of z => 3
+     * x to the power of (y to the power of 2) => 1
+     * ABS Value of y => 2
+     * SQRT(xy to power of z) => 2.83
+     */
 }

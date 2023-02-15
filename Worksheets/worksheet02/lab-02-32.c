@@ -41,4 +41,14 @@ int main(void)
 
     return 0; // Basic exit code for the program since nothing
               // gets output from main operation
+
+    /**
+     * Test values:
+     * 200000
+     * 210000
+     *
+     * Expected output:
+     * This house is $200000. The change is $-10000 since last month.
+     * The estimated monthly mortgage is $850.000000.
+     */
 }
