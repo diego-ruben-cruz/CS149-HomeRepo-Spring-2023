@@ -35,7 +35,7 @@ int main(void)
     printf("Please enter the price of the house from the previous month: $");
     scanf("%d", &lastMonthsPrice);
 
-    // Thse lines accomplish the basic computation using formatted strings.
+    // These lines accomplish the basic computation using formatted strings.
     printf("This house currently costs $%d. The change is $%d since last month.\n", currentPrice, currentPrice - lastMonthsPrice);
     printf("The estimated monthly mortgage is $%0.6lf.\n", (currentPrice * 0.051) / 12);
 
