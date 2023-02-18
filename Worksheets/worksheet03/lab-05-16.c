@@ -51,6 +51,7 @@ int main()
          */
     }
 
+    // Prints out each element of the array in a proper sequence, since the sorting was already done on insertion.
     for (int i = 0; i < defArraySize; i++)
     { // print array in reverse
         printf("%d,", userVals[i]);
