@@ -34,7 +34,8 @@ int main(int argc, char *argv[]) {
     char names[100][30];    //100 by 30 2D array        character array
 
     int counter[100];
-    int i, j,k;
+    int i=0;
+    int j= 0;
 
 
     FILE *file = fopen(filename, "r");
@@ -42,9 +43,8 @@ int main(int argc, char *argv[]) {
         printf("Not able to open the file.");
         return -1;
     }
-    else{
-        printf("Opening the file...");
-    }
+
+
     // DC Note
     // Brute force loop to traverse through the array looking for a particular name value
     // and add to the counter array, has a flaw in that it will double-count arrays in the file
@@ -55,49 +55,55 @@ int main(int argc, char *argv[]) {
      *
      */
 
+    for (int i = 0; i < 100; i++) {
+        counter[i] = -1;
+    }
 
-    //REMOVES NEW LINE FROM FGETS AND COPES LINE with name as long as not empty.
+    //removes new line in fgets and copies the name as long if not empty.
     while(fgets(length,30,file)){      //fgets reads and includes new line character
         char *ret = strchr(length, '\n');   //searches for first occurence of '\n' to replace with 0
-        // can also use  char *key_word = (char*)malloc(sizeof(char) * SIZE);
-        // and then      key_word[strlen(key_word) - 1] = '\0'; to remove new lines
+        // can also use  if (buf[strlen(buf) - 1] == '\n') buf[strlen(buf) - 1] = '\0';
+        //https://aticleworld.com/remove-trailing-newline-character-from-fgets/   Links to an external site.
         if (ret){
             *ret  = '\0';
         }
-         j=0;
+
         if (strlen(length) != 0){                   //if the line is not empty copy the name and length
             strcpy(names[j], length);
             j++;
         }
         else {
-            printf(stderr, "[WARNING] : Line %d is empty\n", j);
+            fprintf(stderr, "[WARNING] : Line %d is empty\n", j);
         }
     }
+
+
 
     // Need to find method to get unique names and then stop looking for those unique names once they've already been searched
     // Not sure if Strcmp will play nice with the char array we've got, despite the fact that this is how they handle strings in C
     //Updating counter for duplicate names while also removing the duplicates, finally print at end of looping through character array
-    int count = 0;
+
+
     for (i = 0; i < j; i++) {       //loop through lines of names
-        for (k = i+1; k < j; k++) {
+        int count = 1;
+        for (int k = i + 1; k < j; k++) {
             if (strcmp(names[i], names[k]) ==       //check if same line
                 0) {// Native C library function to use Strcmp, returns 0 if the strings are the same
                 count++;            //if names are equal/match, count up.
                 counter[k] = 0;     //reset
             }
         }
-        if (counter[i]==0){
-            counter[i]=count;
+        if (counter[i] != 0) {
+            counter[i] = count;
         }
-
-        for(i=0;i<j;i++){
-            if (counter[i]!=0){
-                fprintf("%s: %d\n", names[i], counter[i]);
-            }
+    }
+    for(i=0;i<j;i++){
+        if (counter[i]!=0){
+            printf("%s: %d\n", names[i], counter[i]);
         }
-
-        fclose(file);
-        return 0;
     }
 
+    fclose(file);
+    return 0;
 }
+
