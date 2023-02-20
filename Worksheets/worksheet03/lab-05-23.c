@@ -20,8 +20,43 @@
 
 int main(void)
 {
+    // Local variables for sorting out
+    int arrSize;
+    int userValues[20];
+    int localMin;
+    int runnerUp;
 
-    /* Type your code here. */
+    // Prompt for entering in how many numbers to expect for analysis
+    printf("Please enter the amount of numbers you would like to analyze: ");
+    scanf("%d", &arrSize);
+
+    // For loop that inserts values into the pre-baked array
+    for (int i = 0; i < arrSize; i++)
+    {
+        scanf("%d", &userValues[i]);
+    }
+
+    // For loop that gets the local minimum, given the numbers in the array
+    for (int i = 1; i < arrSize; i++)
+    {
+        if (userValues[i] < userValues[i - 1])
+        {
+            localMin = userValues[i];
+        }
+    }
+
+    // For loop that gets the runner up by having it satisfy being greater than local min
+    // AND being the lowest number amongst the rest
+    for (int i = 1; i < arrSize; i++)
+    {
+        if (userValues[i] > localMin && userValues[i] < userValues[i - 1])
+        {
+            runnerUp = userValues[i];
+        }
+    }
+
+    // Final print statement to output two smallest numbers in the list
+    printf("\nThe lowest values are %d and %d.", localMin, runnerUp);
 
     return 0;
 }
