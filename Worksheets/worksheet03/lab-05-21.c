@@ -26,6 +26,7 @@
 
 int main(void)
 {
+    // internal-use variables to accomplish the task
     int numWordsEntered;
     char searchChar;
     char inputString[200];
@@ -44,12 +45,13 @@ int main(void)
     scanf("%c", &searchChar);
 
     // Block to parse the words from the string into array of strings
+    // Used <https://www.w3resource.com/c-programming-exercises/string/c-string-exercise-31.php> for reference
     int i, j, counter;
     j = 0;
     counter = 0;
     for (i = 0; i <= (strlen(inputString)); i++)
     {
-        if (inputString[i] == ' ' || inputString[i] == '\0')
+        if (inputString[i] == ' ' || inputString[i] == '\0') // If it doesn't
         {
             wordParse[counter][j] = '\0';
             counter++;
@@ -66,6 +68,12 @@ int main(void)
     // and print out any that have the search char in them
     for (i = 0; i < numWordsEntered; i++)
     {
+        /**
+         * Used string C library doc
+         * <https://www.tutorialspoint.com/c_standard_library/string_h.htm>
+         * and <https://www.tutorialspoint.com/c_standard_library/c_function_strchr.htm>
+         * as guides
+         */
         if (strchr(wordParse[i], searchChar) != NULL)
         {
             printf("%s, ", wordParse[i]);
