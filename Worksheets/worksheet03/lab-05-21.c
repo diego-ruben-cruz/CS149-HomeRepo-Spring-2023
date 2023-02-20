@@ -24,24 +24,27 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <stdio.h>
-#include <string.h>
-
-int main(void) {
-
+int main(void)
+{
+   // Code block for initial int prompt
    int numWordsEntered;
+   printf("Please enter the number of words you are about to type: ");
    scanf("%d", &numWordsEntered);
-    
-   char wordParse[20][10];
 
+   // Code block for taking in the string and parsing out the words input
+   char wordParse[20][10];
    for (int i = 0; i < numWordsEntered; i++)
    {
-        scanf("%s", wordParse[i]);
+      scanf("%s", wordParse[i]);
    }
-    
+
+   // Code block for character search prompt
+   printf("Please enter the character you are searching for: ");
    char searchCharacter;
    scanf(" %c", &searchCharacter);
 
+   // Code block for searching thru the array to output the words that contain search character
+   printf("Here are the results of the search: ");
    for (int i = 0; i < numWordsEntered; i++)
    {
       if (strchr(wordParse[i], searchCharacter) != NULL)
@@ -49,9 +52,7 @@ int main(void) {
          printf("%s,", wordParse[i]);
       }
    }
+   printf("\n"); // Basic newline op for cleanup purposes
 
-    printf("\n");
-
-    return 0;
+   return 0;
 }
-
