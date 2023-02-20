@@ -24,61 +24,34 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(void)
-{
-    // internal-use variables to accomplish the task
-    int numWordsEntered;
-    char searchChar;
-    char inputString[200];
-    char wordParse[20][10];
+#include <stdio.h>
+#include <string.h>
 
-    // Prompt to collect number of words entered
-    printf("Please enter how many words you will type: ");
-    scanf("%d", &numWordsEntered);
+int main(void) {
 
-    // Prompt to collect the words to be searched
-    printf("Please enter the words you wish to search through: ");
-    scanf("%s", &inputString);
+   int numWordsEntered;
+   scanf("%d", &numWordsEntered);
+    
+   char wordParse[20][10];
 
-    // Prompt to enter character to search for
-    printf("Please enter the character you would like to search for: ");
-    scanf("%c", &searchChar);
+   for (int i = 0; i < numWordsEntered; i++)
+   {
+        scanf("%s", wordParse[i]);
+   }
+    
+   char searchCharacter;
+   scanf(" %c", &searchCharacter);
 
-    // Block to parse the words from the string into array of strings
-    // Used <https://www.w3resource.com/c-programming-exercises/string/c-string-exercise-31.php> for reference
-    int i, j, counter;
-    j = 0;
-    counter = 0;
-    for (i = 0; i <= (strlen(inputString)); i++)
-    {
-        if (inputString[i] == ' ' || inputString[i] == '\0') // If it doesn't
-        {
-            wordParse[counter][j] = '\0';
-            counter++;
-            j = 0;
-        }
-        else
-        {
-            wordParse[counter][j] = inputString[i];
-            j++;
-        }
-    }
+   for (int i = 0; i < numWordsEntered; i++)
+   {
+      if (strchr(wordParse[i], searchCharacter) != NULL)
+      {
+         printf("%s,", wordParse[i]);
+      }
+   }
 
-    // Block to iterate through array of strings,
-    // and print out any that have the search char in them
-    for (i = 0; i < numWordsEntered; i++)
-    {
-        /**
-         * Used string C library doc
-         * <https://www.tutorialspoint.com/c_standard_library/string_h.htm>
-         * and <https://www.tutorialspoint.com/c_standard_library/c_function_strchr.htm>
-         * as guides
-         */
-        if (strchr(wordParse[i], searchChar) != NULL)
-        {
-            printf("%s, ", wordParse[i]);
-        }
-    }
+    printf("\n");
 
     return 0;
 }
+
