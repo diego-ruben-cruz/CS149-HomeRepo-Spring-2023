@@ -1,0 +1,32 @@
+   54  cd Desktop
+   55  wget http://www.apuebook.com/src.3e.tar.gz
+   56  gunzip src.3e.tar.gz
+   57  tar xvf src.3e.tar
+   58  cd apue.3e
+   59  cd proc
+   60  make all
+   61  ./fork1
+   62  ./fork2
+   63  pwd
+   64  pstree
+   65  ps -a -f -x
+   66  ps -a -f -x | more
+   67  top
+   68  cd Desktop
+   69  wget http://www.apuebook.com/src.3e.tar.gz
+   70  gunzip src.3e.tar.gz
+   71  tar xvf src.3e.tar
+   72  cd apue.3e
+   73  cd proc
+   74  make all
+   75  ./fork1
+   76  ./fork2
+   77  pwd
+   78  pstree
+   79  ps -a -f -x
+   80  ps -a -f -x | more
+   81  top
+   82  man kill
+   83  echo $?
+   84  echo $$
+   85  history > worksheet4.log

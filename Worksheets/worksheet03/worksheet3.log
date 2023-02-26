@@ -1,0 +1,17 @@
+   30  cd Documents
+   31  cd Github
+   32  cd GitHub
+   33  cd Downloads
+   34  wget https://github.com/torvalds/linux/archive/master.zip
+   35  unzip master.zip
+   36  cd linux-master
+   37  pwd
+   38  alias l='ls -latr'
+   39  l
+   40  find . -name mem.c
+   41  find . -names mem.c | xargs head
+   42  find . -name mem.c | xargs head
+   43  find . -name meme.c | xargs grep 86
+   44  cd ..
+   45  history > worksheet3.log
+   46  head worksheet3.log
