@@ -30,13 +30,13 @@ int main(int argc, char *argv[])
         fprintf(stderr, "fork failed\n");
         exit(1);
     }
-    else if (child1 == 0 && child2 == 0)
+    else if (child1 == 0 || child2 == 0)
     { // child (new process)
         printf("hello world from PID %d!\n", (int)getpid());
     }
     else
     { // parent goes down this path (main)
-        printf("hello world from parent PID %d!\n", (int)getpid());
+        printf("hello world from PID %d!\n", (int)getpid());
     }
     return 0;
 }
