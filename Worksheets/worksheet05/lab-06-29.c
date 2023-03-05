@@ -19,43 +19,48 @@
 
 void intToReverseBinary(int integerValue, char binaryValue[])
 {
-    int i = 0;
+    int i = 0; // Basic integer to iterate thru each character of the string until the reverse binary algo is done
     while (integerValue > 0)
     {
-        binaryValue[i] = (integerValue % 2) + '0'; // Adding 48 will convert the int digit into a char
-        integerValue = integerValue / 2;
-        i++;
+        binaryValue[i] = (integerValue % 2) + '0'; // Adding '0' will convert the int digit into a char, essentially adds 48 to the int
+        integerValue = integerValue / 2;           // Next step of reverse binary algorithm to update int value
+        i++;                                       // Refer to above comment when i is declared
     }
 }
 
 void stringReverse(char inputString[], char reversedString[])
 {
-    int actualStringSize = 0;
-    while (inputString[actualStringSize] != '\0')
+    int actualStringSize = 0;                     // Fetches the true size of the string until the null char is reached
+    while (inputString[actualStringSize] != '\0') // This is a loop that iterates thru the string as per above line
     {
         actualStringSize++;
     }
 
-    int j = 0;
-    for (int i = actualStringSize - 1; i > 0; i--)
+    int j = 0; // Basic integer to iterate thru each character of string until string-reverse algo is done
+    for (int i = actualStringSize - 1; i >= 0; i--)
     {
-        reversedString[j] = inputString[i];
-        j++;
+        reversedString[j] = inputString[i]; // Fetches end char of input string, puts it in adjacent char of reverse string
+        j++;                                // Refer to above comment when j is declared
     }
 }
 
 int main(void)
 {
 
-    int inputNum;
-    char reverseBinary[33];
-    char outputBinary[33];
+    int inputNum;           // Basic int var to store user input
+    char reverseBinary[32]; // Reference array to store reverse binary
+    char outputBinary[32];  // Reference array to store output binary
+    // DC Note - Why does 32 work, and not 33 to account for buffer null char from 2/4 byte usage that comes with an int?
 
+    // User prompt to collect the integer that is to be converted
     printf("Please enter an integer to convert to binary: ");
     scanf("%d", &inputNum);
+
+    // Basic backend ops to prepare output, refer to functions defined above
     intToReverseBinary(inputNum, reverseBinary);
     stringReverse(reverseBinary, outputBinary);
 
+    // Outputs the final converted binary
     printf("\nHere is your input converted to binary: %s", outputBinary);
 
     return 0;
