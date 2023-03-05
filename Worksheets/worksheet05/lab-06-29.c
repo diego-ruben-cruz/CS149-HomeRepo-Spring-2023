@@ -17,7 +17,7 @@
  */
 #include <stdio.h>
 
-void intToReverseBinary(int integerValue, char binaryValue[])
+void IntToReverseBinary(int integerValue, char binaryValue[])
 {
     int i = 0; // Basic integer to iterate thru each character of the string until the reverse binary algo is done
     while (integerValue > 0)
@@ -28,20 +28,15 @@ void intToReverseBinary(int integerValue, char binaryValue[])
     }
 }
 
-void stringReverse(char inputString[], char reversedString[])
-{
-    int actualStringSize = 0;                     // Fetches the true size of the string until the null char is reached
-    while (inputString[actualStringSize] != '\0') // This is a loop that iterates thru the string as per above line
-    {
+void StringReverse(char inputString[], char reversedString[]) {
+    int i, actualStringSize = 0;     // Fetches the true size of the string until the null char is reached
+    while (inputString[actualStringSize] !='\0')    // This is a loop that iterates thru the string as per above line
         actualStringSize++;
-    }
 
-    int j = 0; // Basic integer to iterate thru each character of string until string-reverse algo is done
-    for (int i = actualStringSize - 1; i >= 0; i--)
-    {
-        reversedString[j] = inputString[i]; // Fetches end char of input string, puts it in adjacent char of reverse string
-        j++;                                // Refer to above comment when j is declared
+    for (i = 0; i < actualStringSize; i++) {
+        reversedString[i] = inputString[actualStringSize - i - 1];
     }
+    reversedString[actualStringSize] = '\0';
 }
 
 int main(void)
@@ -57,11 +52,11 @@ int main(void)
     scanf("%d", &inputNum);
 
     // Basic backend ops to prepare output, refer to functions defined above
-    intToReverseBinary(inputNum, reverseBinary);
-    stringReverse(reverseBinary, outputBinary);
+    IntToReverseBinary(inputNum, reverseBinary);
+    StringReverse(reverseBinary, outputBinary);
 
     // Outputs the final converted binary
-    printf("\nHere is your input converted to binary: %s", outputBinary);
+    printf("Here is your input converted to binary: %s\n", outputBinary);
 
     return 0;
 }

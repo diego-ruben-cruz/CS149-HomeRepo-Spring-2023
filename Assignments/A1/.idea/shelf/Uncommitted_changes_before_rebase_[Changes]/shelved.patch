@@ -1,0 +1,160 @@
+Index: countnames.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/**\n * Description:\n * Assume that you have a text file with a name on each line,\n * and names are separated by newlines. Assume each row has one name (keep things simple) and a name can occur\n * many times in the file. Assume you are dealing with up to 100 individual names (since you would need dynamic\n * memory allocation for expanding an array to deal with more names, which we'll see later). You want to read the\n * names in and count the occurrences of each. Since we want to be flexible on the type and size of characters we\n * can handle, you can assume Ascii code and you expect a file to contain simple characters of Ascii values from\n * 0-128. A name can be up to 30 characters long.\n You must be able to handle a file with any number of rows, including no names. It is ok if this is slow\n (since you would need dynamic data structures like hash tables to make it fast, which we'll see later). You can\n assume that the input file contains only valid characters and rows are separated by newlines; the input file may\n contain a few empty lines as well (which you will ignore).\n *\n * Author Names:\n * Diego Cruz\n * Saim Sheikh\n *\n * Author emails:\n * diego.cruz@sjsu.edu\n * saim.sheikh@sjsu.edu\n *\n * Last Modified: 2/12/2023\n * Creation Date: 2/12/2023\n */\n#include<stdio.h>\n\nint main(int argc, char *argv[]) {\n    //argc and argv are how command line arguments are passed to main(0 in C/C++.\n    //Argc will be # of strings pointed to by argv\n    //Argv = pointer\n    int counter[100];\n    int i;\n    char names[100][30];\n\n    FILE* file = fopen(filename, \"r\");\n\n    \n    fclose(file);\n    return 0;\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/countnames.c b/countnames.c
+--- a/countnames.c	(revision 5bc297aa94a2c72cec7037c1e6759e866aa38f73)
++++ b/countnames.c	(date 1676844608409)
+@@ -24,19 +24,80 @@
+  * Creation Date: 2/12/2023
+  */
+ #include<stdio.h>
+-
++#include<string.h>
+ int main(int argc, char *argv[]) {
+     //argc and argv are how command line arguments are passed to main(0 in C/C++.
+     //Argc will be # of strings pointed to by argv
+     //Argv = pointer
++    const char *filename=argv[1];   //filename is taken as argument, pointer reference, assume each line max 30 char
++    char length[30];
++    char names[100][30];    //100 by 30 2D array        character array
++
+     int counter[100];
+-    int i;
+-    char names[100][30];
++    int i, j,k;
++
+ 
+-    FILE* file = fopen(filename, "r");
++    FILE *file = fopen(filename, "r");
++    if(file == NULL) {
++        printf("Not able to open the file.");
++        return -1;
++    }
++    else{
++        printf("Opening the file...");
++    }
++    // DC Note
++    // Brute force loop to traverse through the array looking for a particular name value
++    // and add to the counter array, has a flaw in that it will double-count arrays in the file
++    /*FGET from https://www.w3schools.com/c/c_files_read.php
++     * The first parameter specifies where to store the file content, which will be in the length array we just created.
++    The second parameter specifies the maximum size of data to read, which should match the size of length [30].
++    The third parameter requires a file pointer that is used to read the file (fptr in our example).
++     *
++     */
++
+ 
+-    
+-    fclose(file);
+-    return 0;
+-}
++    //REMOVES NEW LINE FROM FGETS AND COPES LINE with name as long as not empty.
++    while(fgets(length,30,file)){      //fgets reads and includes new line character
++        char *ret = strchr(length, '\n');   //searches for first occurence of '\n' to replace with 0
++        // can also use  char *key_word = (char*)malloc(sizeof(char) * SIZE);
++        // and then      key_word[strlen(key_word) - 1] = '\0'; to remove new lines
++        if (ret){
++            *ret  = '\0';
++        }
++         j=0;
++        if (strlen(length) != 0){                   //if the line is not empty copy the name and length
++            strcpy(names[j], length);
++            j++;
++        }
++        else {
++            printf(stderr, "[WARNING] : Line %d is empty\n", j);
++        }
++    }
++
++    // Need to find method to get unique names and then stop looking for those unique names once they've already been searched
++    // Not sure if Strcmp will play nice with the char array we've got, despite the fact that this is how they handle strings in C
++    //Updating counter for duplicate names while also removing the duplicates, finally print at end of looping through character array
++    int count = 0;
++    for (i = 0; i < j; i++) {       //loop through lines of names
++        for (k = i+1; k < j; k++) {
++            if (strcmp(names[i], names[k]) ==       //check if same line
++                0) {// Native C library function to use Strcmp, returns 0 if the strings are the same
++                count++;            //if names are equal/match, count up.
++                counter[k] = 0;     //reset
++            }
++        }
++        if (counter[i]==0){
++            counter[i]=count;
++        }
++
++        for(i=0;i<j;i++){
++            if (counter[i]!=0){
++                fprintf("%s: %d\n", names[i], counter[i]);
++            }
++        }
++
++        fclose(file);
++        return 0;
++    }
+ 
++}
+\ No newline at end of file
+Index: ../../.idea/CS149-HomeRepo-Spring-2023.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../../.idea/CS149-HomeRepo-Spring-2023.iml b/../../.idea/CS149-HomeRepo-Spring-2023.iml
+new file mode 100644
+--- /dev/null	(date 1676159225826)
++++ b/../../.idea/CS149-HomeRepo-Spring-2023.iml	(date 1676159225826)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="CPP_MODULE" version="4">
++  <component name="NewModuleRootManager">
++    <content url="file://$MODULE_DIR$" />
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
+Index: ../../.idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../../.idea/vcs.xml b/../../.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1676159225894)
++++ b/../../.idea/vcs.xml	(date 1676159225894)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++    <mapping directory="$PROJECT_DIR$/Worksheets" vcs="Git" />
++    <mapping directory="$PROJECT_DIR$/Worksheets/worksheet02" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: ../../.idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../../.idea/modules.xml b/../../.idea/modules.xml
+new file mode 100644
+--- /dev/null	(date 1676159225854)
++++ b/../../.idea/modules.xml	(date 1676159225854)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/CS149-HomeRepo-Spring-2023.iml" filepath="$PROJECT_DIR$/.idea/CS149-HomeRepo-Spring-2023.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+diff --git a/countnames.txt b/names.txt
+rename from countnames.txt
+rename to names.txt
