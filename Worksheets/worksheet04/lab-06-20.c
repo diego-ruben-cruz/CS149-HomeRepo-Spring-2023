@@ -1,6 +1,8 @@
 /**
  * Description:
- *
+ * Create a program that takes in the number of laps run around the track
+ * then convert the number of laps into miles.
+ * Format the output to two decimal places.
  *
  * Author Names:
  * Diego Cruz
