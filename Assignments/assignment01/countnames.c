@@ -45,16 +45,6 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // DC Note
-    // Brute force loop to traverse through the array looking for a particular name value
-    // and add to the counter array, has a flaw in that it will double-count arrays in the file
-    /*FGET from https://www.w3schools.com/c/c_files_read.php
-     * The first parameter specifies where to store the file content, which will be in the length array we just created.
-    The second parameter specifies the maximum size of data to read, which should match the size of length [30].
-    The third parameter requires a file pointer that is used to read the file (fptr in our example).
-     *
-     */
-
     for (int i = 0; i < 100; i++)
     {
         counter[i] = -1;
@@ -86,7 +76,6 @@ int main(int argc, char *argv[])
     // Not sure if Strcmp will play nice with the char array we've got, despite the fact that this is how they handle strings in C
 
     // Updating counter for duplicate names while also removing the duplicates, finally print at end of looping through character array
-
     for (i = 0; i < j; i++)
     { // loop through lines of names
         int count = 1;
