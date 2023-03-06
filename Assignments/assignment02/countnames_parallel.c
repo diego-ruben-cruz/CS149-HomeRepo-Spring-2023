@@ -38,25 +38,27 @@ int main(int argc, char *argv[])
     int lineIndex = 0;                 // main index to keep track of line number
     int counter[MAX_LINES];            // Counter is equivalent to a logical index
     char names[MAX_LINES][MAX_LENGTH]; // Creates 2D array of names listed in each file
-    char currentName[MAX_LENGTH];      // Creates
+    char currentName[MAX_LENGTH];      // Creates a current working array for the current 'read' name
 
+    // If the filedesc isn't prim n proper, it returns a -1 for the error
     if (pipe(fd) == -1)
     {
         fprintf(stderr, "Pipe failure - check code");
         return 1;
     }
 
+    // This loops for each file, such that a separate process is made for each one
     for (int i = 1; i < argc; i++)
     {
         char currentName[MAX_LENGTH];
         char names[MAX_LINES][MAX_LENGTH];
         int lineIndex = 0;
 
-        int childPID = fork();
+        int childPID = fork(); // Duplicates number of processes, essentially makes a new one for every files
         if (childPID = 0)
         {
             FILE *file = fopen(argv[i], "r"); // Opens a file from the specified arguments, configured to readonly
-            if (!file)
+            if (!file)                        // Essentially throws an error if the filename does not exist within the directory
             {
                 printf("Unable to open specified file\n");
                 return -1;
@@ -73,12 +75,12 @@ int main(int argc, char *argv[])
                     *ret = '\0';
                 }
 
-                if (strlen(currentName) != 0)
-                { // if the line is not empty copy the pointer and str name to be copied
+                if (strlen(currentName) != 0) // if the line is not empty copy the pointer and str name to be copied
+                {
                     strcpy(names[lineIndex], currentName);
                     lineIndex++;
                 }
-                else
+                else // Throws error warning if there are empty lines in the file
                 {
                     fprintf(stderr, "[WARNING] : Line %d is empty\n", lineIndex);
                 }
@@ -93,9 +95,10 @@ int main(int argc, char *argv[])
 
             exit(0); // Cleanup to prevent child from forking its respective children
         }
+        // no error on child pid handling just yet
     }
 
-    while ((wait(NULL)) > 0)
+    while ((wait(NULL)) > 0) // Waits on any child processes to finish running then does the computing of as1
     {
         int readLine;                          // Utility line number
         char readNames[MAX_LINES][MAX_LENGTH]; // readNames array for computing
@@ -144,6 +147,7 @@ int main(int argc, char *argv[])
             }
         }
     }
+
     // Print: names + occurences
     for (int i = 0; i < lineIndex; i++)
     {
