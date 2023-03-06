@@ -20,19 +20,24 @@
  * diego.cruz@sjsu.edu
  * saim.sheikh@sjsu.edu
  *
- * Last Modified: 2/20/2023
- * Creation Date: 2/12/2023
+ * Last Modified: 03/06/2023
+ * Creation Date: 03/04/2023
  */
 #include <stdio.h>
 #include <string.h>
+#define MAX_LENGTH 30
+#define MAX_LINES 100
+
 int main(int argc, char *argv[])
 {
     // argc and argv are how command line arguments are passed to main(0 in C/C++.
     // Argc will be # of strings pointed to by argv
     // Argv = pointer
+
+
     const char *filename = argv[1]; // filename is taken as argument, pointer reference, assume each line max 30 char
-    char length[30];
-    char names[100][30]; // 100 by 30 2D array        character array
+    char length[MAX_LENGTH];
+    char names[MAX_LINES][MAX_LENGTH]; // 100 by 30 2D array        character array
 
     int counter[100];
     int i = 0;
