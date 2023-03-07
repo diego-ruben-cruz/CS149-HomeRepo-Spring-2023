@@ -7,10 +7,10 @@
  * names in and count the occurrences of each. Since we want to be flexible on the type and size of characters we
  * can handle, you can assume Ascii code and you expect a file to contain simple characters of Ascii values from
  * 0-128. A name can be up to 30 characters long.
- You must be able to handle a file with any number of rows, including no names. It is ok if this is slow
- (since you would need dynamic data structures like hash tables to make it fast, which we'll see later). You can
- assume that the input file contains only valid characters and rows are separated by newlines; the input file may
- contain a few empty lines as well (which you will ignore).
+ * You must be able to handle a file with any number of rows, including no names. It is ok if this is slow
+ * (since you would need dynamic data structures like hash tables to make it fast, which we'll see later). You can
+ * assume that the input file contains only valid characters and rows are separated by newlines; the input file may
+ * contain a few empty lines as well (which you will ignore).
  *
  * Author Names:
  * Diego Cruz
@@ -22,6 +22,12 @@
  *
  * Last Modified: 03/06/2023
  * Creation Date: 03/04/2023
+ * 
+ * To compile with warnings and errors
+ * gcc -o countnames_parallel countnames_parallel.c -Wall -W
+ * 
+ * To execute
+ * ./countnames_parallel.c names.txt names2.txt
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,7 +44,6 @@ int main(int argc, char *argv[])
     int lineIndex = 0;                 // main index to keep track of line number
     int counter[MAX_LINES];            // Counter is equivalent to a logical index
     char names[MAX_LINES][MAX_LENGTH]; // Creates 2D array of names listed in each file
-    char currentName[MAX_LENGTH];      // Creates a current working array for the current 'read' name
 
     // If the filedesc isn't prim n proper, it returns a -1 for the error
     if (pipe(fd) == -1)
@@ -50,12 +55,13 @@ int main(int argc, char *argv[])
     // This loops for each file, such that a separate process is made for each one
     for (int i = 1; i < argc; i++)
     {
-        char currentName[MAX_LENGTH];
+        char currentName[MAX_LENGTH];      // Creates a current working array for the current 'read' name
         char names[MAX_LINES][MAX_LENGTH];
         int lineIndex = 0;
 
         int childPID = fork(); // Duplicates number of processes, essentially makes a new one for every files
-        if (childPID = 0)
+        
+        if (childPID == 0)
         {
             FILE *file = fopen(argv[i], "r"); // Opens a file from the specified arguments, configured to readonly
             if (!file)                        // Essentially throws an error if the filename does not exist within the directory
@@ -156,4 +162,6 @@ int main(int argc, char *argv[])
             printf("%s: %d\n", names[i], counter[i]);
         }
     }
+
+    return 0;
 }
