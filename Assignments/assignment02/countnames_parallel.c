@@ -22,10 +22,10 @@
  *
  * Last Modified: 03/06/2023
  * Creation Date: 03/04/2023
- * 
+ *
  * To compile with warnings and errors
  * gcc -o countnames_parallel countnames_parallel.c -Wall -W
- * 
+ *
  * To execute
  * ./countnames_parallel.c names.txt names2.txt
  */
@@ -55,12 +55,12 @@ int main(int argc, char *argv[])
     // This loops for each file, such that a separate process is made for each one
     for (int i = 1; i < argc; i++)
     {
-        char currentName[MAX_LENGTH];      // Creates a current working array for the current 'read' name
+        char currentName[MAX_LENGTH]; // Creates a current working array for the current 'read' name
         char names[MAX_LINES][MAX_LENGTH];
         int lineIndex = 0;
 
         int childPID = fork(); // Duplicates number of processes, essentially makes a new one for every files
-        
+
         if (childPID == 0)
         {
             FILE *file = fopen(argv[i], "r"); // Opens a file from the specified arguments, configured to readonly
