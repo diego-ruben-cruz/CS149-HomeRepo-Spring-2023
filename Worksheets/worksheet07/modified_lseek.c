@@ -1,5 +1,24 @@
-// C program to read nth byte of a file and
-// copy it to another file using lseek
+/**
+ * Description:
+ * Edit lseek_example.c to read the 1st + (3*i)th bytes of a file
+ * and copy them to another file
+ * 
+ * Test run:
+ * start.txt contains "ABCDEFGHIJKLM"
+ * out.txt should contain "ADGJM"
+ * 
+ * Author Names:
+ * Diego Cruz
+ * Saim Sheikh
+ *
+ * Author emails:
+ * diego.cruz@sjsu.edu
+ * saim.sheikh@sjsu.edu
+ *
+ * Last Modified: 03/20/2023
+ * Creation Date: 03/20/2023
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
