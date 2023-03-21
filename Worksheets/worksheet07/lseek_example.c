@@ -23,13 +23,13 @@ void func(char arr[], int n)
             // SEEK_CUR specifies that
             // the offset provided is relative to the
             // current file position
-            lseek (f_read, n, SEEK_CUR);
-            write (f_write, arr, 1);
+            lseek(f_read, n, SEEK_CUR);
+            write(f_write, arr, 1);
             count = n;
         }
 
-            // After the nth byte (now taking the alternate
-            // nth byte)
+        // After the nth byte (now taking the alternate nth byte)
+        // What making n the same does is that it no longer becomes larger as a result of multiplication, it remains the same size
         else
         {
             count = n; // updated this line from original value (2*n),
