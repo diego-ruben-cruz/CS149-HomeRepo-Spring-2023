@@ -27,11 +27,12 @@ int main()
         char *ptr = strchr(str, '\n');
         if (ptr)
         {
-            //if new line found replace with a null character
-            *ptr  = '\0';
+            // if new line found replace with a null character
+            *ptr = '\0';
         }
 
-        if (strcmp(str, "d") == 0 || strcmp(str, "done") == 0 || strcmp(str, "Done") == 0) return 0;
+        if (strcmp(str, "d") == 0 || strcmp(str, "done") == 0 || strcmp(str, "Done") == 0)
+            return 0;
 
         int n = strlen(str);
 

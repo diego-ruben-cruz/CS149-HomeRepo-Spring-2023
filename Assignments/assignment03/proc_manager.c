@@ -25,7 +25,7 @@
  * gcc -o proc_manager proc_manager.c -Wall -W
  *
  * To execute
- * ./proc_manager.c cmds01.txt cmds02.txt
+ * ./proc_manager.c < cmds.txt
  */
 #include <stdio.h>
 #include <stdlib.h>

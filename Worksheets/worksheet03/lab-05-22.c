@@ -17,11 +17,11 @@
  * Creation Date: 2/16/2023
  */
 #include <stdio.h>
+#define NUM_ELEMENTS 20
 
 int main()
 {
-    const int NUM_ELEMENTS = 20; // Number of input integers
-    int userVals[NUM_ELEMENTS];  // Array to hold the user's input integers
+    int userVals[NUM_ELEMENTS]; // Array to hold the user's input integers
 
     int defArraySize; // Variable that stores the total numbers that will be input into the console
     int lowerBound;   // Variable that stores the lower bound for the inclusive search

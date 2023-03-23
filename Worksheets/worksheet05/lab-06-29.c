@@ -28,12 +28,14 @@ void IntToReverseBinary(int integerValue, char binaryValue[])
     }
 }
 
-void StringReverse(char inputString[], char reversedString[]) {
-    int i, actualStringSize = 0;     // Fetches the true size of the string until the null char is reached
-    while (inputString[actualStringSize] !='\0')    // This is a loop that iterates thru the string as per above line
+void StringReverse(char inputString[], char reversedString[])
+{
+    int i, actualStringSize = 0;                  // Fetches the true size of the string until the null char is reached
+    while (inputString[actualStringSize] != '\0') // This is a loop that iterates thru the string as per above line
         actualStringSize++;
 
-    for (i = 0; i < actualStringSize; i++) {
+    for (i = 0; i < actualStringSize; i++)
+    {
         reversedString[i] = inputString[actualStringSize - i - 1];
     }
     reversedString[actualStringSize] = '\0';

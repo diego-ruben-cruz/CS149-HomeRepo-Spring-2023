@@ -20,7 +20,7 @@
 int main()
 {
     int userVals[NUM_ELEMENTS]; // Array to hold the user's input integers
-    int defArraySize; // Variable that stores the total numbers that will be input into the console
+    int defArraySize;           // Variable that stores the total numbers that will be input into the console
 
     // Prompt to enter in the defined array size from user input
     printf("Input Starting Integer less than 20: ");
