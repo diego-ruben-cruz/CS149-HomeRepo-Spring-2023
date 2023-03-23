@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
             // Note 21 March 2023: We need to edit this chunk to execute the lines as opposed to copying the lines
             // We should use execvp() as per <https://sjsu.instructure.com/courses/1560213/files/folder/code/a3?preview=71399110>
             while (fgets(currentCMD, sizeof(currentCMD), file))
-            {                                          // fgets reads and includes new line character
+            {                                         // fgets reads and includes new line character
                 char *ret = strchr(currentCMD, '\n'); // searches for first occurence of '\n' to replace with 0
                 // can also use  if (buf[strlen(buf) - 1] == '\n') buf[strlen(buf) - 1] = '\0';
                 // https://aticleworld.com/remove-trailing-newline-character-from-fgets/   Links to an external site.
