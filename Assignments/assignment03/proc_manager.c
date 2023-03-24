@@ -1,3 +1,4 @@
+
 /**
  * Description:
  * You will develop a proc_manager program that executes multiple commands.
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
     int fd[2];                         // file descriptor integration
     int lineIndex = 0;                 // main index to keep track of line number
     int counter[MAX_LINES];            // Counter is equivalent to a logical index
-    char names[MAX_LINES][MAX_LENGTH]; // Creates 2D array of names listed in each file
+    char cmds[MAX_LINES][MAX_LENGTH]; // Creates 2D array of names listed in each file
 
     // If the filedesc isn't prim n proper, it returns a -1 for the error
     if (pipe(fd) == -1)
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
     // This loops for each file, such that a separate process is made for each one
     for (int i = 1; i < argc; i++)
     {
-        char currentCMD[MAX_LENGTH]; // Creates a current working array for the current 'read' name
+        char currentCMD[MAX_LENGTH]; // Creates a current working array for the current 'read' cmd
         char cmdlist[MAX_LINES][MAX_LENGTH];
         int lineIndex = 0;
 
@@ -68,10 +69,7 @@ int main(int argc, char *argv[])
                 return -1;
             }
 
-            // removes new line in fgets and copies the name as long if not empty.
-            // We'll have to do some refactoring
-            // Note 21 March 2023: We need to edit this chunk to execute the lines as opposed to copying the lines
-            // We should use execvp() as per <https://sjsu.instructure.com/courses/1560213/files/folder/code/a3?preview=71399110>
+            // removes new line in fgets and copies the cmd as long if not empty.
             while (fgets(currentCMD, sizeof(currentCMD), file))
             {                                         // fgets reads and includes new line character
                 char *ret = strchr(currentCMD, '\n'); // searches for first occurence of '\n' to replace with 0
@@ -104,5 +102,23 @@ int main(int argc, char *argv[])
         }
         // no error on child pid handling just yet
     }
+
+        while ((wait(NULL)) > 0) // Waits on any child processes to finish running then does the computing of as1
+    {
+        int readLine;                          // Utility line number
+        char readNames[MAX_LINES][MAX_LENGTH]; // readNames array for computing
+
+        // Quick closure and reading from child process pipe
+        close(fd[1]);
+        read(fd[0], &readLine, sizeof(readLine));
+        read(fd[0], readNames, sizeof(cmds));
+
+        // Copy the child names to the array
+        for (int i = 0; i < readLine; i++)
+        {
+            // insert execvp here and handle
+        }
+    }
+
     return 0;
 }
