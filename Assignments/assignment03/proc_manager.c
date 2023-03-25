@@ -95,15 +95,22 @@ int main(int argc, char *argv[])
 
             //execute cmd
             arr[0] = "wc";
-            arr[1] = "-w";
-            arr[2] = cmds[i];
-            arr[3] = NULL;
-           // execvp(arr[0], arr);
+            arr[1] = "-l"; // add flag to print line count
+            arr[2] = "-w"; // add flag to print word count
+            arr[3] = "-c"; // add flag to print byte count
+            arr[4] = cmds[i];
+            arr[5] = NULL;
 
-            execlp("wc", "wc", "-w", arr[0], arr);
+            char *args[] = { "wc","-l", "-w", "-c", cmds[i], NULL};
+            execvp("wc", args);
+
+
+
             //if execvp doesn't work, error has occurred/new process img not successful
-            fprintf(stderr, "Failed to execute Cmd\n");
-            return 2;
+            if (execvp(arr[0], arr) == -1) {
+                fprintf(stderr, "Failed to execute command %d\n", i + 1);
+                exit(EXIT_FAILURE);
+            }
         }
     }
     //PARENT
@@ -130,6 +137,7 @@ int main(int argc, char *argv[])
                 dup2(fd_err, 2);
 
                 dprintf(1, "Finished Child %d pID of Parent %d\n", pid, getpid());
+
 
                 // When successfully exited, normal terminate w/exitcode
                 if (WIFEXITED(status))
