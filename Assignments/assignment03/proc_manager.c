@@ -1,4 +1,3 @@
-
 /**
  * Description:
  * You will develop a proc_manager program that executes multiple commands.
@@ -11,6 +10,7 @@
  * and wait for them to complete, while each command will write its stdout and stderr
  * to log files.
  *
+ *  Understand how processes get executed in parallel, keep logs, track exit codes and signals, and duplicate file descriptors.
  * Author Names:
  * Diego Cruz
  * Saim Sheikh
@@ -28,97 +28,121 @@
  * To execute
  * ./proc_manager.c < cmds.txt
  */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
+
 #include <unistd.h>
 #include <sys/wait.h>
+#include <fcntl.h>
+
 #define MAX_LENGTH 30 // Constant for length of string including nullchar
 #define MAX_LINES 100 // Constant for max number of lines in a given file
 
 int main(int argc, char *argv[])
 {
-    int fd[2];                         // file descriptor integration
-    int lineIndex = 0;                 // main index to keep track of line number
-    int counter[MAX_LINES];            // Counter is equivalent to a logical index
+
+    int process = 0;                 // main index to keep track of line number
+
     char cmds[MAX_LINES][MAX_LENGTH]; // Creates 2D array of names listed in each file
 
+    //read string and store in cmds array until end of file.
+    while(scanf("%s", cmds[process++]) != EOF);
+
     // If the filedesc isn't prim n proper, it returns a -1 for the error
-    if (pipe(fd) == -1)
-    {
-        fprintf(stderr, "Pipe failure - check code");
-        return 1;
-    }
 
+    //pids are stored in array
+    int pids[process];
     // This loops for each file, such that a separate process is made for each one
-    for (int i = 1; i < argc; i++)
+    for (int i = 0; i < process; i++)
     {
-        char currentCMD[MAX_LENGTH]; // Creates a current working array for the current 'read' cmd
-        char cmdlist[MAX_LINES][MAX_LENGTH];
-        int lineIndex = 0;
+        pids[i]=fork();           // Duplicates number of processes, essentially makes a new one for every files
 
-        int childPID = fork(); // Duplicates number of processes, essentially makes a new one for every files
+        //CHILD PROCESS
 
-        if (childPID == 0)
+        if (pids[i] == 0)
         {
-            FILE *file = fopen(argv[i], "r"); // Opens a file from the specified arguments, configured to readonly
-            if (!file)                        // Essentially throws an error if the filename does not exist within the directory
+            char *arr[50];
+            int j=0;
+            //Getting list of args by splitting the command, cmds string for current i is tokenized into indivual arguments using strtok and stored in arr
+            arr[j]=strtok(cmds[i]," ");
+            while(arr[j] != NULL) arr[++j] = strtok(NULL, " ");
+            arr[j] = NULL;
+
+            //out is pathed to .out file
+            char out[30];
+
+            char err[30];
+
+            //concatenate pids
+            sprintf(out, "%d", getpid());
+            sprintf(err, "%d", getpid());
+            strcat(out, ".out");
+            strcat(err, ".err");
+
+            //create out and error files
+            // open two file descriptors for out and err files, if file exist
+            //O_RDWR = file can be read/written to. O_creat creates file if doesn't exist, Append adds any writes to end of file, 0777 means all users have full permission read write execute
+            int fd_out = open(out, O_RDWR | O_CREAT | O_APPEND, 0777);
+            int fd_err = open(err, O_RDWR | O_CREAT | O_APPEND, 0777);
+
+            //Dup2 redirects stdout and stderr to .out and err files
+            dup2(fd_out,1);
+            dup2(fd_err,2);
+
+            dprintf(1, "Starting Command %d: Child %d PID of parent %d\n", i + 1, getpid(), getppid());
+
+            //execute cmd
+            arr[0] = "wc";
+            arr[1] = "-w";
+            arr[2] = cmds[i];
+            arr[3] = NULL;
+           // execvp(arr[0], arr);
+
+            execlp("wc", "wc", "-w", arr[0], arr);
+            //if execvp doesn't work, error has occurred/new process img not successful
+            fprintf(stderr, "Failed to execute Cmd\n");
+            return 2;
+        }
+    }
+    //PARENT
+
+    for(int i=0;i<process;i++){
+        if(pids[i]>0){
+            char out[30];
+            char err[30];
+            int status;
+            int pid;
+
+
+            if ((pid = wait(&status)) > 0)
             {
-                printf("Unable to open specified file\n");
-                return -1;
+                sprintf(out, "%d", pid);
+                sprintf(err, "%d", pid);
+                strcat(out, ".out");
+                strcat(err, ".err");
+
+                int fd_out = open(out, O_RDWR | O_CREAT | O_APPEND, 0777);
+                int fd_err = open(err, O_RDWR | O_CREAT | O_APPEND, 0777);
+
+                dup2(fd_out, 1);
+                dup2(fd_err, 2);
+
+                dprintf(1, "Finished Child %d pID of Parent %d\n", pid, getpid());
+
+                // When successfully exited, normal terminate w/exitcode
+                if (WIFEXITED(status))
+                {
+                    dprintf(2, "Exited With Exitcode = %d\n", status);
+                }
+                    // Unsuccessful exit, use kill w/signal
+                else if (WIFSIGNALED(status))
+                {
+                    dprintf(2, "Killed With Signal %d\n", status);
+                }
             }
-
-            // removes new line in fgets and copies the cmd as long if not empty.
-            while (fgets(currentCMD, sizeof(currentCMD), file))
-            {                                         // fgets reads and includes new line character
-                char *ret = strchr(currentCMD, '\n'); // searches for first occurence of '\n' to replace with 0
-                // can also use  if (buf[strlen(buf) - 1] == '\n') buf[strlen(buf) - 1] = '\0';
-                // https://aticleworld.com/remove-trailing-newline-character-from-fgets/   Links to an external site.
-                if (ret)
-                {
-                    *ret = '\0';
-                }
-
-                if (strlen(currentCMD) != 0) // if the line is not empty copy the pointer and str name to be copied
-                {
-                    strcpy(cmdlist[lineIndex], currentCMD);
-                    lineIndex++;
-                }
-                else // Throws error warning if there are empty lines in the file
-                {
-                    fprintf(stderr, "[WARNING] : Line %d is empty\n", lineIndex);
-                }
-            }
-
-            fclose(file); // Closes file after all operations said and done
-
-            // Cleanup for file descriptors and writing to pipe
-            close(fd[0]);
-            write(fd[1], &lineIndex, sizeof(lineIndex));
-            write(fd[1], cmdlist, sizeof(cmdlist));
-
-            exit(0); // Cleanup to prevent child from forking its respective children
-        }
-        // no error on child pid handling just yet
-    }
-
-        while ((wait(NULL)) > 0) // Waits on any child processes to finish running then does the computing of as1
-    {
-        int readLine;                          // Utility line number
-        char readNames[MAX_LINES][MAX_LENGTH]; // readNames array for computing
-
-        // Quick closure and reading from child process pipe
-        close(fd[1]);
-        read(fd[0], &readLine, sizeof(readLine));
-        read(fd[0], readNames, sizeof(cmds));
-
-        // Copy the child names to the array
-        for (int i = 0; i < readLine; i++)
-        {
-            // insert execvp here and handle
         }
     }
-
     return 0;
 }

@@ -7,3 +7,4 @@ touch 2.txt
 touch 3.txt
 touch 4.txt
 pwd
+^D
