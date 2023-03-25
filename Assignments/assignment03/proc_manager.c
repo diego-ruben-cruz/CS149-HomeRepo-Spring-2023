@@ -97,6 +97,7 @@ int main(int argc, char *argv[])
             char *args[] = { "wc","-l", "-w", "-c", cmds[i], NULL};
             execvp("wc", args);
 
+            //execvp(arr[0],arr);
 
 
 
