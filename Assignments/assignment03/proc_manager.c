@@ -94,15 +94,9 @@ int main(int argc, char *argv[])
             dprintf(1, "Starting Command %d: Child %d PID of parent %d\n", i + 1, getpid(), getppid());
 
             //execute cmd
-            arr[0] = "wc";
-            arr[1] = "-l"; // add flag to print line count
-            arr[2] = "-w"; // add flag to print word count
-            arr[3] = "-c"; // add flag to print byte count
-            arr[4] = cmds[i];
-            arr[5] = NULL;
-
             char *args[] = { "wc","-l", "-w", "-c", cmds[i], NULL};
             execvp("wc", args);
+
 
 
 
@@ -121,7 +115,6 @@ int main(int argc, char *argv[])
             char err[30];
             int status;
             int pid;
-
 
             if ((pid = wait(&status)) > 0)
             {
