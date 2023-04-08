@@ -43,7 +43,6 @@ int main(void)
     scanf("%d", &itemOne.itemQuantity);
     // printf("%d\n", itemOne.itemQuantity); // Feedback/debugging line to show what was entered as the input
 
-
     char c = getchar();
     while (c != '\n' && c != EOF)
     {
@@ -66,18 +65,16 @@ int main(void)
     scanf("%d", &itemTwo.itemPrice);
     // printf("%d\n", itemTwo.itemPrice); // Feedback/debugging line to show what was entered as the input
 
-
     // item prompt for quantifying item 2
     printf("Enter the item quantity:\n");
     scanf("%d", &itemTwo.itemQuantity);
     // printf("%d\n", itemTwo.itemQuantity); // Feedback/debugging line to show what was entered as the input
 
-
+    // This gathers the total cost of both items
     printf("\nTOTAL COST\n");
-    PrintItemCost(itemOne);
-    PrintItemCost(itemTwo);
-
-    printf("\nTotal: $%d\n", (itemOne.itemPrice * itemOne.itemQuantity) + (itemTwo.itemPrice * itemTwo.itemQuantity));
+    PrintItemCost(itemOne);                                                                                            // Refer to function definition over in ItemToPurchase.c
+    PrintItemCost(itemTwo);                                                                                            // Refer to function definition over in ItemToPurchase.c
+    printf("\nTotal: $%d\n", (itemOne.itemPrice * itemOne.itemQuantity) + (itemTwo.itemPrice * itemTwo.itemQuantity)); // Summation of prices according to quantity of item
 
     return 0;
 }
