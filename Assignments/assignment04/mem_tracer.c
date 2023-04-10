@@ -286,7 +286,7 @@ int main(int argc, char *argv)
         currentLine[strcspn(nextNode->line, "\r\n")] = 0;                 // What this does is remove \n or \r from the input, removes newlines while preserving spaces
         strcpy(array[lineCount], currentLine);                            // copies the to the char** array that will be used later
         Node *nextNode = (Node *)malloc(sizeof(Node));                    // Makes new node with proper allocation
-        InitNode(nextNode, i, strcpy(nextNode->line, currentLine), NULL); // Initializes new node using strcopy
+        InitNode(nextNode, lineCount, strcpy(nextNode->line, currentLine), NULL); // Initializes new node using strcopy
         temp->nextLine = nextNode;                                        // Sets the tail of the linked-list to the newly created node
         temp = nextNode;                                                  // Sets the temp variable to the newly created node to create a new tail for the next line
         if (i + 1 == size)                                                // Increases capacity if size has been used up
