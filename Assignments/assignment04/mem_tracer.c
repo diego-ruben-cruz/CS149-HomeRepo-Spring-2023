@@ -1,15 +1,27 @@
 /**
  * Description:
- * You will develop a proc_manager program that executes multiple commands.
- * It reads a command for each execution from stdin on one line of input.
- * So, it reads in the command and its parameters to execute from the stdin
- * (FD0 - file descriptor 0) with each line specifying one command execution.
- *
- * You will execute one command and its parameters as specified on each line of stdin input.
- * The proc_manager program will start up all the processes with the exec command
- * and wait for them to complete, while each command will write its stdout and stderr
- * to log files.
- *
+ * Store the command lines in an array and trace the memory usage
+ * 
+ * Implement a program that reads all lines from stdin into a dynamically allocated array of type char**
+ * This will make it so that there are no longer any limitations such as 100 lines or 30 chars
+ * 
+ * Initialize the array mem with malloc up to 10 char* pointers,
+ * and use realloc to expand the array if the init-size isn't big enough
+ * 
+ * Store each line in a linked list where a node contains the line as a string and line index
+ * Implement a recursive function PrintNodes that prints to std_out the content of all nodes in the linked list
+ * Call it at least once from the main() function.
+ * 
+ * Implement tracing of mem-consumption by using a stack to hold the function names that get called,
+ * and print the mem consumed when mem gets allocated, reallocated, or freed
+ * Write separate functinos for each case of allocation/deallocation
+ * 
+ * Your process will write all mem-tracing messages to a log file "memtrace.out"
+ * You can use dup2 for the purpose of redirecting stdout(fd 1) to memtrace.out
+ * 
+ * Ensure there are no mem-leaks, use valgrind to detect mem-leaks
+ * Your code should work on input files up to a few hundred lines.
+ * 
  *  Understand how processes get executed in parallel, keep logs, track exit codes and signals, and duplicate file descriptors.
  * Author Names:
  * Diego Cruz
