@@ -35,15 +35,18 @@
  * Creation Date: 03/20/2023
  *
  * To compile with warnings and errors
- * insert line here
+ * gcc 
  * 
  * To execute
- * insert line here
+ * gcc 
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+
+int size = 10;
+int length = 50;
 
 /**
  * Define structure for linkedlist node
@@ -58,20 +61,10 @@ typedef struct Node
 
 } Node;
 void PrintNodes(Node *refNode); // Recursive function to print all nodes
+void FreeNodes(Node *refNode); // Recursive function to free all nodes in mem
+void InitNode(Node *newNode, int lineIndex, char *line, Node *nextNode);// Function to initialize the node
+void IncreaseArrayCapacity(char ***array, int j);
 #endif
-
-void FreeNodes(Node *refNode)
-{
-    if (!refNode) // Quick check to see if not nullpointer
-    {
-        // Push Function To Stack
-        PUSH_TRACE("Free-Nodes");  // Refer to PUSH_TRACE in memtracer.c
-        FreeNodes(refNode->nextLine); // Recursive call to each node until the last one is called
-        free(refNode->line);          // frees memory allotted to the string inside the struct
-        free(refNode);                // frees mem occupied by rest of node
-        POP_TRACE();               // Refer to POP_TRACE in memtracer.c
-    }
-}
 
 /**
  * Prints ALL of the lines to the console using printf()
@@ -91,6 +84,42 @@ void PrintNodes(Node *refNode)
     }
 }
 
+/**
+ * Initializes a new node given a pointer to work with
+*/
+void InitNode(Node *newNode, int newLineIndex, char *newLine, Node *newNextLine){
+    PUSH_TRACE("Initializing node..."); // Push function to stack
+    newNode->line = malloc(length * sizeof(newLine));
+    strcpy(newNode->line, newLine);
+    newNode->lineIndex = newLineIndex;
+    newNode->nextLine = newNextLine;
+    POP_TRACE(); // Pop the function from the stack
+
+}
+
+void FreeNodes(Node *refNode)
+{
+    if (!refNode) // Quick check to see if not nullpointer
+    {
+        // Push Function To Stack
+        PUSH_TRACE("Free-Nodes");  // Refer to PUSH_TRACE in memtracer.c
+        FreeNodes(refNode->nextLine); // Recursive call to each node until the last one is called
+        free(refNode->line);          // frees memory allotted to the string inside the struct
+        free(refNode);                // frees mem occupied by rest of node
+        POP_TRACE();               // Refer to POP_TRACE in memtracer.c
+    }
+}
+
+/**
+ * Increases the array capacity by a factor of 2
+*/
+void IncreaseArrayCapacity(char ***totalArray, int refIndex){
+    size *= 2;
+    *totalArray = (char**) realloc(*totalArray, size * sizeof(char*));
+    for(int i = refIndex; i < size; i++){
+        (*totalArray)[i] = malloc(length * sizeof(char));
+    }
+}
 
 /**
  * TRACE_NODE_STRUCT is a linked list of pointers to function identifiers
@@ -229,63 +258,28 @@ void FREE(void *p, char *file, int line)
 #define malloc(a) MALLOC(a, __FILE__, __LINE__)
 #define free(a) FREE(a, __FILE__, __LINE__)
 
-// function add_column will add an extra column to a 2d array of ints.
-// This function is intended to demonstrate how memory usage tracing of realloc is done
-// Returns the number of new columns (updated)
-int add_column(int **array, int rows, int columns)
-{
-    PUSH_TRACE("add_column");
-    int i;
-    for (i = 0; i < rows; i++)
-    {
-        array[i] = (int *)realloc(array[i], sizeof(int) * (columns + 1));
-        array[i][columns] = 10 * i + columns;
-    } // for
-    POP_TRACE();
-    return (columns + 1);
-}
-
-// function make_extend_array
-// Example of how the memory trace is done
-// This function is intended to demonstrate how memory usage tracing of malloc and free is done
-void make_extend_array()
-{
-    PUSH_TRACE("make_extend_array");
-    int i, j;
-    int **array;
-    int ROW = 4;
-    int COL = 3;
-    // make array
-    array = (int **)malloc(sizeof(int *) * 4); // 4 rows
-    for (i = 0; i < ROW; i++)
-    {
-        array[i] = (int *)malloc(sizeof(int) * 3); // 3 columns
-        for (j = 0; j < COL; j++)
-            array[i][j] = 10 * i + j;
-    } // for
-    // display array
-    for (i = 0; i < ROW; i++)
-        for (j = 0; j < COL; j++)
-            printf("array[%d][%d]=%d\n", i, j, array[i][j]);
-    // and a new column
-    int NEWCOL = add_column(array, ROW, COL);
-    // now display the array again
-    for (i = 0; i < ROW; i++)
-        for (j = 0; j < NEWCOL; j++)
-            printf("array[%d][%d]=%d\n", i, j, array[i][j]);
-    // now deallocate it
-    for (i = 0; i < ROW; i++)
-        free((void *)array[i]);
-    free((void *)array);
-    POP_TRACE();
-    return;
-}
-
 // function main
-int main()
+int main(int argc, char *argv)
 {
-    PUSH_TRACE("main");
-    make_extend_array();
-    POP_TRACE();
-    return (0);
+    char **array;
+    int process_num = ;
+    Node currentNode;
+    Node *headNode = (Node *) malloc(sizeof(Node));
+    InitNode(headNode, 0, "info to be replaced", NULL);
+    if(fgets(headNode.line, sizeof, stdin) != NULL) // Need to figure out a way to get the buffer length necessary to get the whole line. That, or get chunks at a time until end-of-line gets reached
+    {
+
+    }
+
+    while(fgets()){
+
+    }
+
+    int file_desc_out = open("memtrace.out", O_RDWR | O_CREAT | O_APPEND, 0777);
+    dup2(file_desc_out, 1);
+
+    PUSH_TRACE("main function has begun:");
+    array = malloc(size * sizeof(char*));
+
+ 
 } // end main
