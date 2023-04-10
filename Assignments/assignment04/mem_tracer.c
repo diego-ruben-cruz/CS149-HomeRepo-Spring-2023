@@ -49,6 +49,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
+#define UTIL_MAX_LENGTH 100
 
 int size = 10;
 int length = 50;
@@ -75,7 +76,6 @@ void IncreaseArrayCapacity(char ***array, int j);
  *
  * @param refNode   The reference node.
  */
-
 
 /**
  * TRACE_NODE_STRUCT is a linked list of pointers to function identifiers
@@ -218,46 +218,52 @@ void FREE(void *p, char *file, int line)
 int main(int argc, char *argv[])
 {
     char **array;
-    char commands[100][30];
+    char commands[UTIL_MAX_LENGTH][UTIL_MAX_LENGTH];
     int process_num = 0;
 
-    while(scanf("%s", commands[process_num++]) != EOF);
+    while (scanf("%s", commands[process_num++]) != EOF)
+        ;
     // Create File Descriptor
     int file_descriptor_out = open("memtrace.out", O_RDWR | O_CREAT | O_APPEND, 0777);
     dup2(file_descriptor_out, 1);
     // Push Main Function To Stack
     PUSH_TRACE("main");
     // Allocate Array Of Size 10
-    array = malloc(size * sizeof(char*));
+    array = malloc(size * sizeof(char *));
     // Allocate Memory For LinkedList Head
-    Node *head = (Node *) malloc(sizeof(Node));
+    Node *head = (Node *)malloc(sizeof(Node));
     InitNode(head, 0, "Dummy Head Node", NULL);
     // Create Temp Pointer
     Node *temp = head;
     // Allocate Memory For Each Element
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         array[i] = malloc(length * sizeof(char));
     }
 
-    for (int i = 0; i < process_num; i++) {
+    for (int i = 0; i < process_num; i++)
+    {
         strcpy(array[i], commands[i]);
-        Node *nextNode = (Node *) malloc(sizeof(Node));
+        Node *nextNode = (Node *)malloc(sizeof(Node));
         InitNode(nextNode, i, commands[i], NULL);
         temp->nextLine = nextNode;
         temp = nextNode;
-        if (i + 1 == size) IncreaseArrayCapacity(&array, i + 1);
+        if (i + 1 == size)
+            IncreaseArrayCapacity(&array, i + 1);
     }
 
     // Print Arrays
     dprintf(2, "Array values:\n");
-    for (int i = 0; i < process_num; i++) {
+    for (int i = 0; i < process_num; i++)
+    {
         dprintf(2, "%d: %s\n", i, array[i]);
     }
     // Skip Dummy Head Nodes, Print LinkedList Values
     dprintf(2, "\nLinkedList values:\n");
     PrintNodes(head->nextLine);
     // Free Strings Stored In Array
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         free(array[i]);
     }
     // Free The Array
@@ -273,7 +279,7 @@ int main(int argc, char *argv[])
 
 void PrintNodes(Node *refNode)
 {
-    if (refNode!= NULL) // Quick check to see if not nullpointer
+    if (refNode != NULL) // Quick check to see if not nullpointer
     {
         // Push Function to stack
         PUSH_TRACE("Printing Nodes...\n");                         // Refer to PUSH_TRACE in memtrace.c
