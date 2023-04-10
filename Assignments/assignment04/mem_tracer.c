@@ -151,38 +151,29 @@ char *PRINT_TRACE()
 }
 
 // function REALLOC calls realloc
-// TODO REALLOC should also print info about memory usage.
-// TODO For this purpose, you need to add a few lines to this function.
-// For instance, example of print out:
-// "File mem_tracer.c, line X, function F reallocated the memory segment at address A to a new size S"
 // Information about the function F should be printed by printing the stack (use PRINT_TRACE)
 void *REALLOC(void *p, int t, char *file, int line)
 {
     p = realloc(p, t);
+    dprintf(1,"File '%s', line %d, function %s reallocated the memory segment at address %p to new size %d\n", file, line, PRINT_TRACE(), &p, t);
     return p;
 }
 
 // function MALLOC calls malloc
-// TODO MALLOC should also print info about memory usage.
-// TODO For this purpose, you need to add a few lines to this function.
-// For instance, example of print out:
-// "File mem_tracer.c, line X, function F allocated new memory segment at address A to size S"
 // Information about the function F should be printed by printing the stack (use PRINT_TRACE)
 void *MALLOC(int t, char *file, int line)
 {
     void *p;
     p = malloc(t);
+    dprintf(1, "File '%s', line %d, function %s allocated new memory segment at address %p to size %d\n", file, line, PRINT_TRACE(), &p, t);
     return p;
 }
 
 // function FREE calls free
-// TODO FREE should also print info about memory usage.
-// TODO For this purpose, you need to add a few lines to this function.
-// For instance, example of print out:
-// "File mem_tracer.c, line X, function F deallocated the memory segment at address A"
 // Information about the function F should be printed by printing the stack (use PRINT_TRACE)
 void FREE(void *p, char *file, int line)
 {
+    dprintf(1, "File '%s', line %d, function %s deallocated the memory segment at address %p\n", file, line, PRINT_TRACE(), &p);
     free(p);
 }
 
