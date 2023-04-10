@@ -11,6 +11,6 @@ typedef struct Node
 
 } Node;
 
-void PrintNodes(Node refNode); // Recursive function to
+void PrintNodes(Node refNode); // Recursive function to print all nodes
 
 #endif
