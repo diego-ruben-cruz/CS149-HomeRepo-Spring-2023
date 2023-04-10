@@ -36,6 +36,9 @@
  *
  * To compile with warnings and errors
  * gcc -o mem_tracer mem_tracer.c -Wall -W
+ * 
+ * To check for memleaks
+ * valgrind --leak-check=full ./mem_tracer
  *
  * To execute
  * ./mem_tracer < cmds.txt
@@ -289,16 +292,16 @@ int main(int argc, char *argv)
         InitNode(nextNode, lineCount, strcpy(nextNode->line, currentLine), NULL); // Initializes new node using strcopy
         temp->nextLine = nextNode;                                                // Sets the tail of the linked-list to the newly created node
         temp = nextNode;                                                          // Sets the temp variable to the newly created node to create a new tail for the next line
-        if (i + 1 == size)                                                        // Increases capacity if size has been used up
+        if (lineCount + 1 == size)                                                        // Increases capacity if size has been used up
         {
-            IncreaseArrayCapacity(&array, i + 1);
+            IncreaseArrayCapacity(&array, lineCount + 1);
         }
     }
 
     dprintf(2, "Array Values:\n");
     for (int i = 0; i < lineCount; i++)
     {
-        dprintf(2, "%d: %s\n"i, array[i]); // Prints out array values for debugging purposes
+        dprintf(2, "%d: %s\n", array[i]); // Prints out array values for debugging purposes
     }
 
     dprintf(2, "\nLinkedList Values:\n");
