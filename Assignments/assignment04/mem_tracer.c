@@ -44,6 +44,54 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+
+/**
+ * Define structure for linkedlist node
+ */
+#ifndef NODE_H
+#define NODE_H
+typedef struct Node
+{
+    char *line;
+    int lineIndex;
+    struct Node *nextLine;
+
+} Node;
+void PrintNodes(Node *refNode); // Recursive function to print all nodes
+#endif
+
+void FreeNodes(Node *node)
+{
+    if (!node) // Quick check to see if not nullpointer
+    {
+        // Push Function To Stack
+        PUSH_TRACE("Free-Nodes");  // Refer to PUSH_TRACE in memtrace.c
+        FreeNodes(node->nextLine); // Recursive call to each node until the last one is called
+        free(node->line);          // frees memory allotted to the string inside the struct
+        free(node);                // frees mem occupied by rest of node
+        POP_TRACE();               // Refer to POP_TRACE in memtrace.c
+    }
+}
+
+/**
+ * Prints ALL of the lines to the console using printf()
+ * Makes the assumption that the provided node is the head node.
+ *
+ * @param refNode   The reference node.
+ */
+void PrintNodes(Node *refNode)
+{
+    if (!refNode) // Quick check to see if not nullpointer
+    {
+        // Push Function to stack
+        PUSH_TRACE("Printing Nodes...\n");                           // Refer to PUSH_TRACE in memtrace.c
+        dprintf(2, "%d: %s\n", refNode->lineIndex, refNode->line); // Print out to logfile somethin like this: '###: insert_line_string_here' into its own line
+        PrintNodes(refNode->nextLine);                          // Recursive call to each node until the last one gets called
+        POP_TRACE();                                         // Refer to POP_TRACE in memtrace.c
+    }
+}
+
+
 /**
  * TRACE_NODE_STRUCT is a linked list of pointers to function identifiers
  *
