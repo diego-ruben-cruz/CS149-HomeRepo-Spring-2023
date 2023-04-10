@@ -22,24 +22,25 @@ void PrintNodes(Node *refNode) // Recursive function to
 
 void FreeNodes(Node *node)
 {
-    if (!node)
+    if (!node) // Quick check to see if not nullpointer
     {
         // Push Function To Stack
-        PUSH_TRACE("Free-Nodes");
-        FreeNodes(node->nextLine);
-        free(node->line);
-        free(node);
-        POP_TRACE();
+        PUSH_TRACE("Free-Nodes");  // Refer to PUSH_TRACE in memtrace.c
+        FreeNodes(node->nextLine); // Recursive call to each node until the last one is called
+        free(node->line);          // frees memory allotted to the string inside the struct
+        free(node);                // frees mem occupied by rest of node
+        POP_TRACE();               // Refer to POP_TRACE in memtrace.c
     }
 }
 
 void PrintNodes(Node *node)
 {
-    if (!node)
+    if (!node) // Quick check to see if not nullpointer
     {
-        PUSH_TRACE("Print-Nodes");
-        dprintf(2, "%d: %s\n", node->lineIndex, node->line);
-        PrintNodes(node->nextLine);
-        POP_TRACE();
+        // Push Function to stack
+        PUSH_TRACE("Print-Nodes");                           // Refer to PUSH_TRACE in memtrace.c
+        dprintf(2, "%d: %s\n", node->lineIndex, node->line); // Print out to logfile somethin like this: '###: insert_line_string_here' into its own line
+        PrintNodes(node->nextLine);                          // Recursive call to each node until the last one gets called
+        POP_TRACE();                                         // Refer to POP_TRACE in memtrace.c
     }
 }
