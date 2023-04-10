@@ -35,10 +35,10 @@
  * Creation Date: 03/20/2023
  *
  * To compile with warnings and errors
- * gcc -o proc_manager proc_manager.c -Wall -W
- *
+ * insert line here
+ * 
  * To execute
- * ./proc_manager.c < cmds.txt
+ * insert line here
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,16 +60,16 @@ typedef struct Node
 void PrintNodes(Node *refNode); // Recursive function to print all nodes
 #endif
 
-void FreeNodes(Node *node)
+void FreeNodes(Node *refNode)
 {
-    if (!node) // Quick check to see if not nullpointer
+    if (!refNode) // Quick check to see if not nullpointer
     {
         // Push Function To Stack
-        PUSH_TRACE("Free-Nodes");  // Refer to PUSH_TRACE in memtrace.c
-        FreeNodes(node->nextLine); // Recursive call to each node until the last one is called
-        free(node->line);          // frees memory allotted to the string inside the struct
-        free(node);                // frees mem occupied by rest of node
-        POP_TRACE();               // Refer to POP_TRACE in memtrace.c
+        PUSH_TRACE("Free-Nodes");  // Refer to PUSH_TRACE in memtracer.c
+        FreeNodes(refNode->nextLine); // Recursive call to each node until the last one is called
+        free(refNode->line);          // frees memory allotted to the string inside the struct
+        free(refNode);                // frees mem occupied by rest of node
+        POP_TRACE();               // Refer to POP_TRACE in memtracer.c
     }
 }
 
