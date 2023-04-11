@@ -23,7 +23,7 @@
  * Your code should work on input files up to a few hundred lines.
  *
  * Understand how processes get executed in parallel, keep logs, track exit codes and signals, and duplicate file descriptors.
- * 
+ *
  * Author Names:
  * Diego Cruz
  * Saim Sheikh
@@ -215,6 +215,57 @@ void FREE(void *p, char *file, int line)
 #define malloc(a) MALLOC(a, __FILE__, __LINE__)
 #define free(a) FREE(a, __FILE__, __LINE__)
 
+void PrintNodes(Node *refNode)
+{
+    if (refNode != NULL) // Quick check to see if not nullpointer
+    {
+        // Push Function to stack
+        PUSH_TRACE("Printing Nodes...\n");                         // Refer to PUSH_TRACE in memtrace.c
+        dprintf(2, "%d: %s\n", refNode->lineIndex, refNode->line); // Print out to logfile somethin like this: '###: insert_line_string_here' into its own line
+        PrintNodes(refNode->nextLine);                             // Recursive call to each node until the last one gets called
+        POP_TRACE();                                               // Refer to POP_TRACE in memtrace.c
+    }
+}
+
+/**
+ * Initializes a new node given a pointer to work with
+ */
+void InitNode(Node *newNode, int newLineIndex, char *newLine, Node *newNextLine)
+{
+    PUSH_TRACE("Initializing node..."); // Push function to stack
+    newNode->line = malloc(length * sizeof(char));
+    strcpy(newNode->line, newLine);
+    newNode->lineIndex = newLineIndex;
+    newNode->nextLine = newNextLine;
+    POP_TRACE(); // Pop the function from the stack
+}
+
+void FreeNodes(Node *refNode)
+{
+    if (refNode != NULL) // Quick check to see if not nullpointer
+    {
+        // Push Function To Stack
+        PUSH_TRACE("Free-Nodes");     // Refer to PUSH_TRACE in memtracer.c
+        FreeNodes(refNode->nextLine); // Recursive call to each node until the last one is called
+        free(refNode->line);          // frees memory allotted to the string inside the struct
+        free(refNode);                // frees mem occupied by rest of node
+        POP_TRACE();                  // Refer to POP_TRACE in memtracer.c
+    }
+}
+
+/**
+ * Increases the array capacity by a factor of 2
+ */
+void IncreaseArrayCapacity(char ***totalArray, int refIndex)
+{
+    size *= 2;
+    *totalArray = (char **)realloc(*totalArray, size * sizeof(char *));
+    for (int i = refIndex; i < size; i++)
+    {
+        (*totalArray)[i] = malloc(length * sizeof(char));
+    }
+}
+
 // function main
 int main(int argc, char *argv[])
 {
@@ -225,10 +276,11 @@ int main(int argc, char *argv[])
 
     // while (scanf("%s", commands[process_num++]) != EOF)
     //     ;
-    while (fgets(currentLine, UTIL_MAX_LENGTH, stdin) != NULL){
+    while (fgets(currentLine, UTIL_MAX_LENGTH, stdin) != NULL)
+    {
         process_num++;
         currentLine[strcspn(currentLine, "\r\n")] = 0;
-        strcpy(commands[process_num], currentLine);        
+        strcpy(commands[process_num], currentLine);
     }
     // Create File Descriptor
     int file_descriptor_out = open("memtrace.out", O_RDWR | O_CREAT | O_APPEND, 0777);
@@ -268,6 +320,7 @@ int main(int argc, char *argv[])
     // Skip Dummy Head Nodes, Print LinkedList Values
     dprintf(2, "\nLinkedList values:\n");
     PrintNodes(head->nextLine);
+
     free(currentLine);
     // Free Strings Stored In Array
     for (int i = 0; i < size; i++)
@@ -283,55 +336,4 @@ int main(int argc, char *argv[])
     // Free The Stack
     free(TRACE_TOP);
     return 0;
-} // end main
-
-void PrintNodes(Node *refNode)
-{
-    if (refNode != NULL) // Quick check to see if not nullpointer
-    {
-        // Push Function to stack
-        PUSH_TRACE("Printing Nodes...\n");                         // Refer to PUSH_TRACE in memtrace.c
-        dprintf(2, "%d: %s\n", refNode->lineIndex, refNode->line); // Print out to logfile somethin like this: '###: insert_line_string_here' into its own line
-        PrintNodes(refNode->nextLine);                             // Recursive call to each node until the last one gets called
-        POP_TRACE();                                               // Refer to POP_TRACE in memtrace.c
-    }
-}
-
-/**
- * Initializes a new node given a pointer to work with
- */
-void InitNode(Node *newNode, int newLineIndex, char *newLine, Node *newNextLine)
-{
-    PUSH_TRACE("Initializing node..."); // Push function to stack
-    newNode->line = malloc(length * sizeof(newLine));
-    strcpy(newNode->line, newLine);
-    newNode->lineIndex = newLineIndex;
-    newNode->nextLine = newNextLine;
-    POP_TRACE(); // Pop the function from the stack
-}
-
-void FreeNodes(Node *refNode)
-{
-    if (!refNode) // Quick check to see if not nullpointer
-    {
-        // Push Function To Stack
-        PUSH_TRACE("Free-Nodes");     // Refer to PUSH_TRACE in memtracer.c
-        FreeNodes(refNode->nextLine); // Recursive call to each node until the last one is called
-        free(refNode->line);          // frees memory allotted to the string inside the struct
-        free(refNode);                // frees mem occupied by rest of node
-        POP_TRACE();                  // Refer to POP_TRACE in memtracer.c
-    }
-}
-
-/**
- * Increases the array capacity by a factor of 2
- */
-void IncreaseArrayCapacity(char ***totalArray, int refIndex)
-{
-    size *= 2;
-    *totalArray = (char **)realloc(*totalArray, size * sizeof(char *));
-    for (int i = refIndex; i < size; i++)
-    {
-        (*totalArray)[i] = malloc(length * sizeof(char));
-    }
 }
