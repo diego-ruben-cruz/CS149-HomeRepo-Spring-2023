@@ -39,7 +39,7 @@
  * gcc -o mem_tracer mem_tracer.c -Wall -W
  *
  * To check for memleaks
- * valgrind --leak-check=full ./mem_tracer
+ * valgrind --leak-check=full ./mem_tracer < cmds.txt
  *
  * To execute
  * ./mem_tracer < cmds.txt
@@ -52,13 +52,14 @@
 #include <fcntl.h>
 #define UTIL_MAX_LENGTH 100
 
-int size = 10;
-int length = 50;
+int size = 10;   // Initial size of the array, will be resized as needed as per as4 specs
+int length = 50; // Initial length of the string buffer, resized as needed when going line-by-line
 
 /**
  * Define structure for linkedlist node
+ *
+ * Size: 18 bytes
  */
-
 typedef struct Node
 {
     char *line;
@@ -66,17 +67,12 @@ typedef struct Node
     struct Node *nextLine;
 
 } Node;
+
+// Define the functions which will be available for nodes
 void PrintNodes(Node *refNode);                                          // Recursive function to print all nodes
 void FreeNodes(Node *refNode);                                           // Recursive function to free all nodes in mem
 void InitNode(Node *newNode, int lineIndex, char *line, Node *nextNode); // Function to initialize the node
-void IncreaseArrayCapacity(char ***array, int j);
-
-/**
- * Prints ALL of the lines to the console using printf()
- * Makes the assumption that the provided node is the head node.
- *
- * @param refNode   The reference node.
- */
+void IncreaseArrayCapacity(char ***array, int j);                        // Function to increase the size of the array of strings
 
 /**
  * TRACE_NODE_STRUCT is a linked list of pointers to function identifiers
@@ -98,8 +94,6 @@ static TRACE_NODE *TRACE_TOP = NULL; // ptr to the top of the stack
  * just like the stack in your computer would do.
  * The "global" string denotes the start of the function call trace.
  * The char *p parameter is the name of the new function that is added to the call trace.
- * See the examples of calling PUSH_TRACE and POP_TRACE below
- * in the main, make_extend_array, add_column functions.
  */
 void PUSH_TRACE(char *p) // push p on the stack
 {
@@ -149,9 +143,6 @@ void POP_TRACE() // remove the op of the stack
 
 /* function PRINT_TRACE prints out the sequence of function calls that are on the
 stack at this instance */
-/* For example, it returns a string that looks like: global:funcA:funcB:funcC. */
-/* Printing the function call sequence the other way around is also ok:
-funcC:funcB:funcA:global */
 char *PRINT_TRACE()
 {
     int depth = 50; // A max of 50 levels in the stack will be combined in a string for printing out.
@@ -211,10 +202,17 @@ void FREE(void *p, char *file, int line)
     free(p);
 }
 
+// Define re-definitions of in-hous functions when working with the stack in particular
 #define realloc(a, b) REALLOC(a, b, __FILE__, __LINE__)
 #define malloc(a) MALLOC(a, __FILE__, __LINE__)
 #define free(a) FREE(a, __FILE__, __LINE__)
 
+/**
+ * Prints ALL of the lines to the console using printf()
+ * Makes the assumption that the provided node is the head node.
+ *
+ * @param refNode   The reference node.
+ */
 void PrintNodes(Node *refNode)
 {
     if (refNode != NULL) // Quick check to see if not nullpointer
@@ -228,18 +226,28 @@ void PrintNodes(Node *refNode)
 }
 
 /**
- * Initializes a new node given a pointer to work with
+ * Initializes a new node given a pointer to store the information.
+ *
+ * @param newNode   The pointer for the new node that was initialized
+ * @param newLineIndex  The line index that corresponds to the node
+ * @param newLine   The string with which to initialize the new node
+ * @param newNextLine   The pointer to the next node, if it is the very last node, this value should be NULL
  */
 void InitNode(Node *newNode, int newLineIndex, char *newLine, Node *newNextLine)
 {
-    PUSH_TRACE("Initializing node..."); // Push function to stack
-    newNode->line = malloc(length * sizeof(char));
-    strcpy(newNode->line, newLine);
-    newNode->lineIndex = newLineIndex;
-    newNode->nextLine = newNextLine;
-    POP_TRACE(); // Pop the function from the stack
+    PUSH_TRACE("Initializing node...");            // Push function to stack
+    newNode->line = malloc(length * sizeof(char)); // allocate memory to the
+    strcpy(newNode->line, newLine);                // Copy the string from the newLine pointer to the pointer inside of the new node
+    newNode->lineIndex = newLineIndex;             // Sets line index of node info to the one given
+    newNode->nextLine = newNextLine;               // Sets pointer for the next node in succession to the given value
+    POP_TRACE();                                   // Pop the function from the stack
 }
 
+/**
+ * Frees the nodes from memory, provided a pointer to a node. This is sequential, so it is best to free using the head node.
+ *
+ * @param refNode   The node from which to free each individual node
+ */
 void FreeNodes(Node *refNode)
 {
     if (refNode != NULL) // Quick check to see if not nullpointer
@@ -254,61 +262,66 @@ void FreeNodes(Node *refNode)
 }
 
 /**
- * Increases the array capacity by a factor of 2
+ * Increases the array capacity by a factor of 2 to allow for more commands to be processed if there are more than what size currently measures.
+ *
+ * @param totalArray The array which contains the string array to allow for different files.
+ * @param refIndex  The index of the very last node to increase the size with.
  */
 void IncreaseArrayCapacity(char ***totalArray, int refIndex)
 {
-    size *= 2;
-    *totalArray = (char **)realloc(*totalArray, size * sizeof(char *));
-    for (int i = refIndex; i < size; i++)
+    size *= 2;                                                          // Doubles the size variable
+    *totalArray = (char **)realloc(*totalArray, size * sizeof(char *)); // Runs a reallocation of memory according to the total length of the master array
+    for (int i = refIndex; i < size; i++)                               // Loop to iterature thru the master array
     {
-        (*totalArray)[i] = malloc(length * sizeof(char));
+        (*totalArray)[i] = malloc(length * sizeof(char)); // Runs a new allocation of memory based on the length of each string in the array
     }
 }
 
-// function main
+// BEGIN MAIN FUNCTION
 int main(int argc, char *argv[])
 {
-    char **array;
-    char commands[UTIL_MAX_LENGTH][UTIL_MAX_LENGTH];
-    char currentLine[UTIL_MAX_LENGTH];
-    int process_num = 0;
+    char **array;                                    // Utility string array to store each cmd in a variable setting, ignoring char/numOfCommand limits of previous assignments
+    char commands[UTIL_MAX_LENGTH][UTIL_MAX_LENGTH]; // Utility fixed-size string array to run copies of already-processed lines to array
+    char currentLine[UTIL_MAX_LENGTH];               // Utility string to take input from stdin and remove newlines before it gets passed to commands[][]
+    int process_num = 0;                             // Utility int to keep track of how many lines have been processed
 
-    // while (scanf("%s", commands[process_num++]) != EOF)
-    //     ;
-    while (fgets(currentLine, UTIL_MAX_LENGTH, stdin) != NULL)
+    while (fgets(currentLine, UTIL_MAX_LENGTH, stdin) != NULL) // While loop to iterature through the entirety of the file until EOF has been reached
     {
-        process_num++;
-        currentLine[strcspn(currentLine, "\r\n")] = 0;
-        strcpy(commands[process_num], currentLine);
+        process_num++;                                 // Increase the index num, will init to 1 to handle empty files with no commands
+        currentLine[strcspn(currentLine, "\r\n")] = 0; // Quick operation to handle newline chars and remove them from the line before they get stored/executed
+        strcpy(commands[process_num], currentLine);    // Copies already-processed line to commands[][]
     }
-    // Create File Descriptor
-    int file_descriptor_out = open("memtrace.out", O_RDWR | O_CREAT | O_APPEND, 0777);
-    dup2(file_descriptor_out, 1);
-    // Push Main Function To Stack
-    PUSH_TRACE("main");
-    // Allocate Array Of Size 10
-    array = malloc(size * sizeof(char *));
-    // Allocate Memory For LinkedList Head
-    Node *head = (Node *)malloc(sizeof(Node));
+
+    // File Descriptor
+    int file_descriptor_out = open("memtrace.out", O_RDWR | O_CREAT | O_APPEND, 0777); // Create File Descriptor
+    dup2(file_descriptor_out, 1);                                                      // Linux syscall to assign filedesc 1 to memtrace.out
+    PUSH_TRACE("main");                                                                // Push Main Function To Stack
+
+    array = malloc(size * sizeof(char *)); // Allocate Array Of Size 10
+
+    // Head Node
+    Node *head = (Node *)malloc(sizeof(Node)); // Allocate Memory For LinkedList Head
     InitNode(head, 0, "Dummy Head Node", NULL);
-    // Create Temp Pointer
-    Node *temp = head;
+    Node *temp = head; // Create Temp Pointer
+
     // Allocate Memory For Each Element
     for (int i = 0; i < size; i++)
     {
         array[i] = malloc(length * sizeof(char));
     }
 
+    // Copy each line to the double pointer ** to eliminate char limit
     for (int i = 0; i < process_num; i++)
     {
-        strcpy(array[i], commands[i]);
-        Node *nextNode = (Node *)malloc(sizeof(Node));
-        InitNode(nextNode, i, commands[i], NULL);
-        temp->nextLine = nextNode;
-        temp = nextNode;
-        if (i + 1 == size)
-            IncreaseArrayCapacity(&array, i + 1);
+        strcpy(array[i], commands[i]);                 // Copy string from commands[][] to *array[]
+        Node *nextNode = (Node *)malloc(sizeof(Node)); // Create next node with mem allocated
+        InitNode(nextNode, i, commands[i], NULL);      // Copy the string to the node
+        temp->nextLine = nextNode;                     // Set tail of previous node to current node
+        temp = nextNode;                               // Set ptr to current node to process the next node
+        if (i + 1 == size)                             // Check if size is bigger than previously set value
+        {
+            IncreaseArrayCapacity(&array, i + 1); // If it is bigger, then increase array capacity to allow for more lines to be processed
+        }
     }
 
     // Print Arrays
@@ -317,23 +330,20 @@ int main(int argc, char *argv[])
     {
         dprintf(2, "%d: %s\n", i, array[i]);
     }
+
     // Skip Dummy Head Nodes, Print LinkedList Values
     dprintf(2, "\nLinkedList values:\n");
     PrintNodes(head->nextLine);
 
-    free(currentLine);
-    // Free Strings Stored In Array
+    free(currentLine); // Free memory assigned to the currentLine util array
     for (int i = 0; i < size; i++)
     {
-        free(array[i]);
+        free(array[i]); // Free strings stored in array
     }
-    // Free The Array
-    free(array);
-    // Recursively Free Nodes In LinkedList
-    FreeNodes(head);
-    // Pop Main Function From Stack
-    POP_TRACE();
-    // Free The Stack
-    free(TRACE_TOP);
-    return 0;
+    free(array);     // Free The Array
+    FreeNodes(head); // Recursively Free Nodes In LinkedList
+    POP_TRACE();     // Pop Main Function From Stack
+    free(TRACE_TOP); // Free The Stack
+
+    return 0; // end main
 }
