@@ -22,7 +22,8 @@
  * Ensure there are no mem-leaks, use valgrind to detect mem-leaks
  * Your code should work on input files up to a few hundred lines.
  *
- *  Understand how processes get executed in parallel, keep logs, track exit codes and signals, and duplicate file descriptors.
+ * Understand how processes get executed in parallel, keep logs, track exit codes and signals, and duplicate file descriptors.
+ * 
  * Author Names:
  * Diego Cruz
  * Saim Sheikh
@@ -31,8 +32,8 @@
  * diego.cruz@sjsu.edu
  * saim.sheikh@sjsu.edu
  *
- * Last Modified: 03/24/2023
- * Creation Date: 03/20/2023
+ * Last Modified: 04/10/2023
+ * Creation Date: 04/07/2023
  *
  * To compile with warnings and errors
  * gcc -o mem_tracer mem_tracer.c -Wall -W
@@ -219,10 +220,16 @@ int main(int argc, char *argv[])
 {
     char **array;
     char commands[UTIL_MAX_LENGTH][UTIL_MAX_LENGTH];
+    char currentLine[UTIL_MAX_LENGTH];
     int process_num = 0;
 
-    while (scanf("%s", commands[process_num++]) != EOF)
-        ;
+    // while (scanf("%s", commands[process_num++]) != EOF)
+    //     ;
+    while (fgets(currentLine, UTIL_MAX_LENGTH, stdin) != NULL){
+        process_num++;
+        currentLine[strcspn(currentLine, "\r\n")] = 0;
+        strcpy(commands[process_num], currentLine);        
+    }
     // Create File Descriptor
     int file_descriptor_out = open("memtrace.out", O_RDWR | O_CREAT | O_APPEND, 0777);
     dup2(file_descriptor_out, 1);
@@ -261,6 +268,7 @@ int main(int argc, char *argv[])
     // Skip Dummy Head Nodes, Print LinkedList Values
     dprintf(2, "\nLinkedList values:\n");
     PrintNodes(head->nextLine);
+    free(currentLine);
     // Free Strings Stored In Array
     for (int i = 0; i < size; i++)
     {
