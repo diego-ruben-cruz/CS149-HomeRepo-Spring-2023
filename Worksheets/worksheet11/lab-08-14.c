@@ -64,15 +64,18 @@ int main(void)
     ContactNode *head = (ContactNode *)malloc(sizeof(ContactNode));
     initializeContactNode(head, "Dummy Head Node", "", NULL);
     ContactNode *temp = head;
-    int contactIndex = 0
+    int contactIndex = 0;
+    char tempString[UTIL_MAX_LENGTH];
 
     // Loop to collect input  for 
     for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j < 2; j++)
-        {
-            if(fgets() != NULL)
-                }
+        if (fgets() != NULL){
+
+        }
+        else{
+            
+        }
     }
 
 
