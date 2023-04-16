@@ -36,8 +36,10 @@ typedef struct ContactNode
  * @param newNumber The number with which to initialize the new node
  * @param newNextNode The pointer to the next node in the linked list
  */
-static void initializeContactNode(ContactNode *newNode, int newIndex, char *newName, char *newNumber, ContactNode *newNextNode)
+void initializeContactNode(ContactNode *newNode, int newIndex, char *newName, char *newNumber, ContactNode *newNextNode)
 {
+    newNode->contactName = malloc(UTIL_MAX_LENGTH * sizeof(char));
+    newNode->contactPhoneNumber = malloc(UTIL_MAX_LENGTH * sizeof(char));
     newNode->nodeIndex = newIndex;
     strcpy(newNode->contactName, newName);
     strcpy(newNode->contactPhoneNumber, newNumber);
@@ -49,7 +51,7 @@ static void initializeContactNode(ContactNode *newNode, int newIndex, char *newN
  *
  * @param targetNode The node from which to retrieve the contact name
  */
-static char *GetName(ContactNode *targetNode)
+char *GetName(ContactNode *targetNode)
 {
     return targetNode->contactName;
 }
@@ -59,7 +61,7 @@ static char *GetName(ContactNode *targetNode)
  *
  * @param targetNode The node from which to retrieve the contact number
  */
-static char *GetPhoneNumber(ContactNode *targetNode)
+char *GetPhoneNumber(ContactNode *targetNode)
 {
     return targetNode->contactPhoneNumber;
 }
@@ -69,7 +71,7 @@ static char *GetPhoneNumber(ContactNode *targetNode)
  *
  * @param targetNode The node from which to retrieve the pointer
  */
-static ContactNode *GetNext(ContactNode *targetNode)
+ContactNode *GetNext(ContactNode *targetNode)
 {
     return targetNode->nextNodePtr;
 }
@@ -80,7 +82,7 @@ static ContactNode *GetNext(ContactNode *targetNode)
  * @param nodeToInsert The node that shall be inserted into the linked list
  * @param precedingNode The node which shall point to the node to be inserted
  */
-static void InsertAfter(ContactNode *nodeToInsert, ContactNode *precedingNode)
+void InsertAfter(ContactNode *nodeToInsert, ContactNode *precedingNode)
 {
     precedingNode->nextNodePtr = nodeToInsert;
 }
@@ -93,7 +95,7 @@ static void InsertAfter(ContactNode *nodeToInsert, ContactNode *precedingNode)
  *
  * @param targetNode The node to be printed
  */
-static void PrintContactNode(ContactNode *targetNode)
+void PrintContactNode(ContactNode *targetNode)
 {
     printf("Name: %s\n", GetName(targetNode));
     printf("Phone number: %s\n\n", GetPhoneNumber(targetNode));
