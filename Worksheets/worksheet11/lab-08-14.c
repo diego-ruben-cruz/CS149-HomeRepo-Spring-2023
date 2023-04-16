@@ -31,16 +31,16 @@ typedef struct ContactNode_struct
  *
  * @param newNode   The new node to fill in
  * @param newIndex  The index which the new node belongs to
- * @param initName  The name with which to initialize the new node
- * @param initNumber The number with which to initialize the new node
- * @param initNextNode The pointer to the next node in the linked list
+ * @param newName  The name with which to initialize the new node
+ * @param newNumber The number with which to initialize the new node
+ * @param newNextNode The pointer to the next node in the linked list
  */
-static void initializeContactNode(ContactNode *newNode, int newIndex, char *initName, char *initNumber, ContactNode *initNextNode)
+static void initializeContactNode(ContactNode *newNode, int newIndex, char *newName, char *newNumber, ContactNode *newNextNode)
 {
     newNode->nodeIndex = newIndex;
-    strcpy(newNode->contactName, initName);
-    strcpy(newNode->contactPhoneNumber, initNumber);
-    newNode->nextNodePtr = initNextNode;
+    strcpy(newNode->contactName, newName);
+    strcpy(newNode->contactPhoneNumber, newNumber);
+    newNode->nextNodePtr = newNextNode;
 }
 
 /**
