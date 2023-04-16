@@ -36,14 +36,14 @@ typedef struct ContactNode
  * @param newNumber The number with which to initialize the new node
  * @param newNextNode The pointer to the next node in the linked list
  */
-void initializeContactNode(ContactNode *newNode, int newIndex, char *newName, char *newNumber, ContactNode *newNextNode)
+void InitializeContactNode(ContactNode *newNode, char *newName, char *newNumber)
 {
     newNode->contactName = malloc(UTIL_MAX_LENGTH * sizeof(char));
     newNode->contactPhoneNumber = malloc(UTIL_MAX_LENGTH * sizeof(char));
-    newNode->nodeIndex = newIndex;
     strcpy(newNode->contactName, newName);
     strcpy(newNode->contactPhoneNumber, newNumber);
-    newNode->nextNodePtr = newNextNode;
+    newNode->nodeIndex = 0;
+    newNode->nextNodePtr = NULL;
 }
 
 /**
@@ -125,7 +125,8 @@ int main(void)
     int contactIndex = 0;
     char tempName[UTIL_MAX_LENGTH];
     char tempNum[UTIL_MAX_LENGTH];
-    initializeContactNode(head, contactIndex, "Dummy Head Node", "Nothing to see here", NULL);
+    InitializeContactNode(head, "Dummy Head Node", "Nothing to see here");
+    head->nodeIndex = contactIndex;
 
     // Loop to collect input for 3 contacts
     for (int i = 0; i < 3; i++)
@@ -140,11 +141,11 @@ int main(void)
             tempNum[strcspn(tempNum, "\r\n")] = 0;
 
             // Create new node, and initialize it
-            ContactNode *nextNode = (ContactNode *)malloc(sizeof(ContactNode));     // Create next node with mem allocated
-            initializeContactNode(nextNode, contactIndex, tempName, tempNum, NULL); // Initialize node with proper values
-            InsertAfter(nextNode, temp);                                            // Set tail of preceding node to current node
-            temp = GetNext(temp);                                                   // Set ptr to current node to process next possible node
-            // temp = nextNode;
+            ContactNode *nextNode = (ContactNode *)malloc(sizeof(ContactNode)); // Create next node with mem allocated
+            InitializeContactNode(nextNode, tempName, tempNum);                 // Initialize node with proper values
+            nextNode->nodeIndex = contactIndex;                                 // Set index number of newly created node
+            InsertAfter(nextNode, temp);                                        // Set tail of preceding node to current node
+            temp = GetNext(temp);                                               // Set ptr to current node to process next possible node
         }
         else
         {
