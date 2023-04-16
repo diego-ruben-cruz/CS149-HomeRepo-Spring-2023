@@ -14,10 +14,11 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #define UTIL_MAX_LENGTH 100
 
-typedef struct ContactNode_struct
+typedef struct ContactNode
 {
     int nodeIndex;
     char *contactName;
@@ -168,9 +169,6 @@ int main(void)
         temp = GetNext(temp); // Set ptr to next node
     }
 
-    free(contactIndex);
-    free(tempName);
-    free(tempNum);
     FreeNodes(head);
 
     return 0;
