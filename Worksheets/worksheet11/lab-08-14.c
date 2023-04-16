@@ -129,8 +129,8 @@ int main(void)
     {
         if (fgets(tempName, UTIL_MAX_LENGTH, stdin) != NULL)
         {
-            contactIndex++;                         // Increase index of
-            fgets(tempNum, UTIL_MAX_LENGTH, stdin); // Retrieve temp
+            contactIndex++;                         // Increase index of contact number
+            fgets(tempNum, UTIL_MAX_LENGTH, stdin); // Retrieve number from the command line as well
 
             // Function to remove newline chars from the input
             tempName[strcspn(tempName, "\r\n")] = 0;
