@@ -120,18 +120,19 @@ void FreeNodes(ContactNode *refNode)
 // Begin Main
 int main(void)
 {
-    ContactNode *head = (ContactNode *)malloc(sizeof(ContactNode));
-    ContactNode *temp = head;
-    int contactIndex = 0;
-    char tempName[UTIL_MAX_LENGTH];
-    char tempNum[UTIL_MAX_LENGTH];
-    InitializeContactNode(head, "Dummy Head Node", "Nothing to see here");
-    head->nodeIndex = contactIndex;
+    // Variables are set up here
+    ContactNode *head = (ContactNode *)malloc(sizeof(ContactNode));        // Create head node with mem allocated
+    ContactNode *temp = head;                                              // Create temp variable that will help for creation of new nodes
+    int contactIndex = 0;                                                  // Utility index int variable to add to node
+    char tempName[UTIL_MAX_LENGTH];                                        // Utility name string storage to temporarily process then copy onto the structure
+    char tempNum[UTIL_MAX_LENGTH];                                         // Utility phoneNum string storage to temporarily process then copy onto the structure
+    InitializeContactNode(head, "Dummy Head Node", "Nothing to see here"); // Initialize dummy head node so subsequent nodes are from input
+    head->nodeIndex = contactIndex;                                        // Init head node index to 0
 
     // Loop to collect input for 3 contacts
     for (int i = 0; i < 3; i++)
     {
-        if (fgets(tempName, UTIL_MAX_LENGTH, stdin) != NULL)
+        if (fgets(tempName, UTIL_MAX_LENGTH, stdin) != NULL) // Checks if input is null
         {
             contactIndex++;                         // Increase index of contact number
             fgets(tempNum, UTIL_MAX_LENGTH, stdin); // Retrieve number from the command line as well
@@ -147,7 +148,7 @@ int main(void)
             InsertAfter(nextNode, temp);                                        // Set tail of preceding node to current node
             temp = GetNext(temp);                                               // Set ptr to current node to process next possible node
         }
-        else
+        else // It should not get to this point in the context of the program, but figured it was worth implementing out of principle
         {
             temp->nextNodePtr = NULL; // set pointer to final node to NULL
             break;                    // end the loop, handles if the number of inputs is shorter than 6
@@ -164,6 +165,15 @@ int main(void)
     }
 
     // Loop to iterate thru linked list to print contact info to following format:
+    // EXAMPLE====
+    // CONTACT LIST
+    // Name: John Doe
+    // Phone number: 408-867-5309
+    //
+    // Name: Jane Doe
+    // Phone number: 443-555-2864
+    // END====
+    // And so on for each name
     printf("\nCONTACT LIST\n");
     temp = GetNext(head);
     for (int i = 0; i < contactIndex; i++)
@@ -172,6 +182,7 @@ int main(void)
         temp = GetNext(temp); // Set ptr to next node
     }
 
+    // Free allocation of memory for each node, refer to FreeNodes() function defined above
     FreeNodes(head);
 
     return 0;
