@@ -38,7 +38,7 @@
  * To compile with warnings and errors
  * gcc -o mem_tracer mem_tracer.c -Wall -W
  *
- * To check for memleaks
+ * To check execution for memleaks
  * valgrind --leak-check=full ./mem_tracer < cmds.txt
  *
  * To execute
@@ -133,7 +133,7 @@ void PUSH_TRACE(char *p) // push p on the stack
  * function POP_TRACE
  * Pop a function call from the stack
  */
-void POP_TRACE() // remove the op of the stack
+void POP_TRACE() // remove the top of the stack
 {
     TRACE_NODE *tnode;
     tnode = TRACE_TOP;
@@ -202,7 +202,7 @@ void FREE(void *p, char *file, int line)
     free(p);
 }
 
-// Define re-definitions of in-hous functions when working with the stack in particular
+// Define re-definitions of in-house functions when working with the stack in particular
 #define realloc(a, b) REALLOC(a, b, __FILE__, __LINE__)
 #define malloc(a) MALLOC(a, __FILE__, __LINE__)
 #define free(a) FREE(a, __FILE__, __LINE__)
@@ -326,16 +326,15 @@ int main(int argc, char *argv[])
 
     // Print Arrays
     dprintf(2, "Array values:\n");
-    for (int i = 0; i < process_num; i++)
+    for (int i = 1; i < process_num; i++)
     {
         dprintf(2, "%d: %s\n", i, array[i]);
     }
 
     // Skip Dummy Head Nodes, Print LinkedList Values
     dprintf(2, "\nLinkedList values:\n");
-    PrintNodes(head->nextLine);
+    PrintNodes(head->nextLine->nextLine);
 
-    free(currentLine); // Free memory assigned to the currentLine util array
     for (int i = 0; i < size; i++)
     {
         free(array[i]); // Free strings stored in array
