@@ -36,7 +36,7 @@ int main(void)
     *example = 1337;
     printf("Example int value: %d\n", *example);
     printf("Expect no free after this point...\n");
-    // free(example);
+    // free(example); // Was not specified in question, not included when executed
 }
 /**
  * What happens when this program runs?
