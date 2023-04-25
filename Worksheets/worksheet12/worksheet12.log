@@ -1,0 +1,31 @@
+   69  cd Worksheets/worksheet12
+   70  gcc -o q4 q4.c -Wall -W
+   71  clear
+   72  gcc -o q4 q4.c -Wall -W
+   73  ./q4
+   74  valgrind --leack-check=full ./q4
+   75  valgrind --leak-check=full ./q4
+   76  gcc -o q4 q4.c -Wall -W
+   77  clear
+   78  gcc -o q4 q4.c -Wall -W
+   79  valgrind --leak-check=full ./q4
+   80  clear
+   81  gcc -o q5 q5.c -Wall -W
+   82  valgrind --leak-check=full ./q5
+   83  ./q5
+   84  gcc -o q5 q5.c -Wall -W
+   85  clear
+   86  gcc -o q5 q5.c -Wall -W
+   87  ./q5
+   88  gcc -o q5 q5.c -Wall -W
+   89  ./q5
+   90  gcc -o q5 q5.c -Wall -W
+   91  clear
+   92  gcc -o q5 q5.c -Wall -W
+   93  valgrind --leak-check=full ./q5
+   94  clear
+   95  gcc -o q6 q6.c -Wall -W
+   96  ./q6
+   97  valgrind --leak-check=full ./q6
+   98  clear
+   99  history > worksheet12.log

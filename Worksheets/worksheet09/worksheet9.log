@@ -1,0 +1,7 @@
+   62  make all
+   63  ./sigusr &
+   64  kill -SIGUSR1 4280
+   65  kill -SIGUSR2 4280
+   66  kill -SIGCONT 4280
+   67  kill -9 4280
+   68  history > worksheet9.log

@@ -1,0 +1,52 @@
+File 'mem_tracer.c', line 300, function main:global allocated new memory segment at address 0x1ffeffd250 to size 80
+File 'mem_tracer.c', line 303, function main:global allocated new memory segment at address 0x1ffeffd250 to size 24
+File 'mem_tracer.c', line 239, function Initializing node...:main:global allocated new memory segment at address 0x1ffeffd220 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 310, function main:global allocated new memory segment at address 0x1ffeffd250 to size 50
+File 'mem_tracer.c', line 317, function main:global allocated new memory segment at address 0x1ffeffd250 to size 24
+File 'mem_tracer.c', line 239, function Initializing node...:main:global allocated new memory segment at address 0x1ffeffd220 to size 50
+File 'mem_tracer.c', line 317, function main:global allocated new memory segment at address 0x1ffeffd250 to size 24
+File 'mem_tracer.c', line 239, function Initializing node...:main:global allocated new memory segment at address 0x1ffeffd220 to size 50
+File 'mem_tracer.c', line 317, function main:global allocated new memory segment at address 0x1ffeffd250 to size 24
+File 'mem_tracer.c', line 239, function Initializing node...:main:global allocated new memory segment at address 0x1ffeffd220 to size 50
+File 'mem_tracer.c', line 317, function main:global allocated new memory segment at address 0x1ffeffd250 to size 24
+File 'mem_tracer.c', line 239, function Initializing node...:main:global allocated new memory segment at address 0x1ffeffd220 to size 50
+File 'mem_tracer.c', line 317, function main:global allocated new memory segment at address 0x1ffeffd250 to size 24
+File 'mem_tracer.c', line 239, function Initializing node...:main:global allocated new memory segment at address 0x1ffeffd220 to size 50
+File 'mem_tracer.c', line 317, function main:global allocated new memory segment at address 0x1ffeffd250 to size 24
+File 'mem_tracer.c', line 239, function Initializing node...:main:global allocated new memory segment at address 0x1ffeffd220 to size 50
+File 'mem_tracer.c', line 338, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 341, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 343, function main:global deallocated the memory segment at address 0x1ffeffd258
+File 'mem_tracer.c', line 258, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd178
+File 'mem_tracer.c', line 259, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd178
+File 'mem_tracer.c', line 258, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd198
+File 'mem_tracer.c', line 259, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd198
+File 'mem_tracer.c', line 258, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd1b8
+File 'mem_tracer.c', line 259, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd1b8
+File 'mem_tracer.c', line 258, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd1d8
+File 'mem_tracer.c', line 259, function Free-Nodes:Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd1d8
+File 'mem_tracer.c', line 258, function Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd1f8
+File 'mem_tracer.c', line 259, function Free-Nodes:Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd1f8
+File 'mem_tracer.c', line 258, function Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd218
+File 'mem_tracer.c', line 259, function Free-Nodes:Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd218
+File 'mem_tracer.c', line 258, function Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd238
+File 'mem_tracer.c', line 259, function Free-Nodes:main:global deallocated the memory segment at address 0x1ffeffd238
+File 'mem_tracer.c', line 346, function global deallocated the memory segment at address 0x1ffeffd258
