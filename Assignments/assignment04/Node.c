@@ -1,5 +1,7 @@
 /**
  * Define a structure to allow for a linked list
+ * 
+ * Not needed for compiling AS4, just useful when working with just problems particular to the nodes.
  *
  */
 #include "Node.h"
