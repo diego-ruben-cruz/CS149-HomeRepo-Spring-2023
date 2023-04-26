@@ -1,0 +1,4 @@
+sleep 5
+ls -latr
+sleep 1
+^D <---Ctrl-D is the EOF signal that ends the input stream
