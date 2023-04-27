@@ -22,7 +22,6 @@
  *
  * To check for memleaks
  * valgrind --leak-check=full ./proc_manager < cmds.txt
- *
  */
 #include <stdio.h>
 #include <stdlib.h>
