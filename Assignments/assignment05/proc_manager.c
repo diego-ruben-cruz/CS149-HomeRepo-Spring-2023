@@ -32,8 +32,10 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <time.h>
+#define UTIL_MAX_LENGTH 100
 
-typedef struct Node {
+typedef struct Node
+{
     int i;
     int pid;
     struct timespec time;
@@ -43,29 +45,71 @@ typedef struct Node {
 } Node;
 
 void InitializeNode(
-        Node *node,
-        struct timespec time,
-        int pid, int i,
-        char *comm,
-        Node *next
-);
+    Node *node,
+    struct timespec time,
+    int pid, int i,
+    char *comm,
+    Node *next);
 
 Node *find(
-        Node *head,
-        int pid
-);
+    Node *head,
+    int pid);
 
+// Find the node in the linkedlist by its pid
+Node *find(Node *head, int pid)
+{
+    Node *temp = head;
+    // Traverse Through List and Compare Each Node With PID
+    while (temp != NULL)
+    {
+        if (temp->pid == pid)
+        {
+            return temp;
+        }
 
-int main(int argc, char *argv[]) {
+        temp = temp->next;
+    }
+    return NULL;
+}
+
+void InitializeNode(Node *node, struct timespec time, int pid, int i, char *comm, Node *next)
+{
+    // Assign Values Passed To The Function - New Created Node
+    node->comm = malloc(UTIL_MAX_LENGTH * sizeof(char));
+    node->time = time;
+    node->pid = pid;
+    node->i = i;
+    strcpy(node->comm, comm);
+    node->next = next;
+}
+
+void FreeNodes(Node *refNode)
+{
+    if (refNode != NULL) // Quick check to see if not nullpointer
+    {
+        // Push Function To Stack
+        FreeNodes(refNode->next); // Recursive call to each node until the last one is called
+        free(refNode->comm);      // frees memory allotted to the string inside the struct
+        free(refNode);            // frees mem occupied by rest of node
+    }
+}
+
+int main(int argc, char *argv[])
+{
 
     int proc_num = 0;
-    char cmds[100][30];
-    //read input and put in each command as seperate string in array until eof
-    while (scanf("%s", cmds[proc_num++]) != EOF);
+    char cmds[UTIL_MAX_LENGTH][UTIL_MAX_LENGTH];
+    char currentLine[UTIL_MAX_LENGTH];
+    // read input and put in each command as seperate string in array until eof
+    while (fgets(currentLine, UTIL_MAX_LENGTH, stdin) != NULL)
+    {
+        currentLine[strcspn(currentLine, "\r\n")] = 0;
+        strcpy(cmds[proc_num], currentLine);
+        proc_num++;
+    };
 
     // create linked list to store info about child proc.
-
-    Node *head = (Node *) malloc(sizeof(Node));
+    Node *head = (Node *)malloc(sizeof(Node));
 
     struct timespec dummy;
     clock_gettime(CLOCK_MONOTONIC, &dummy);
@@ -74,18 +118,21 @@ int main(int argc, char *argv[]) {
     Node *temp = head;
 
     int pids[proc_num];
-    //create chiuld proc for each command in cmd array using fork.
-    for (int i = 0; i < proc_num; i++) {
+    // create chiuld proc for each command in cmd array using fork.
+    for (int i = 0; i < proc_num; i++)
+    {
         pids[i] = fork();
 
-        //if fork call return 0, child proc is successfully made and execute command with execvp
-        if (pids[i] == 0) {
+        // if fork call return 0, child proc is successfully made and execute command with execvp
+        if (pids[i] == 0)
+        {
 
             char *array[50];
 
             int j = 0;
             array[j] = strtok(cmds[i], " ");
-            while(array[j] != NULL) array[++j] = strtok(NULL, " ");
+            while (array[j] != NULL)
+                array[++j] = strtok(NULL, " ");
             array[j] = NULL;
 
             char out[25];
@@ -110,14 +157,15 @@ int main(int argc, char *argv[]) {
             return 2;
         }
         // PARENT PROCESS IF greater than 0, create new node in linked list
-        else if (pids[i] > 0) {
+        else if (pids[i] > 0)
+        {
             // Create New Node - LinkedList
             Node *nextNode = malloc(sizeof(Node));
 
             struct timespec start;
             clock_gettime(CLOCK_MONOTONIC, &start);
 
-            //set val of Node struct
+            // set val of Node struct
             InitializeNode(nextNode, start, pids[i], i, cmds[i], NULL);
             temp->next = nextNode;
             temp = nextNode;
@@ -127,8 +175,10 @@ int main(int argc, char *argv[]) {
     int pid;
     int status;
 
-    while((pid = wait(&status)) >= 0) {
-        if (pid > 0) {
+    while ((pid = wait(&status)) >= 0)
+    {
+        if (pid > 0)
+        {
             char out[25];
             char err[25];
             // Set File Descriptors
@@ -147,19 +197,22 @@ int main(int argc, char *argv[]) {
             dprintf(1, "Finished child %d pid of parent %d\n", pid, getpid());
 
             // Specify Exit Code In .ERR File - If Success
-            if (WIFEXITED(status)) {
+            if (WIFEXITED(status))
+            {
                 dprintf(2, "Exited with exitcode = %d\n", status);
             }
 
-                // Specify Signal Code In .ERR File - If Killed
-            else if (WIFSIGNALED(status)) {
+            // Specify Signal Code In .ERR File - If Killed
+            else if (WIFSIGNALED(status))
+            {
                 dprintf(2, "spawning too fast\n");
                 dprintf(2, "Killed with signal %d\n", status);
             }
             // Find Node By PID
             Node *node = find(head->next, pid);
 
-            if (node != NULL) {
+            if (node != NULL)
+            {
                 // Create Finish Timetamp
                 struct timespec finish;
                 clock_gettime(CLOCK_MONOTONIC, &finish);
@@ -167,20 +220,24 @@ int main(int argc, char *argv[]) {
                 double elapsed = finish.tv_sec - node->time.tv_sec;
                 elapsed += (finish.tv_nsec - node->time.tv_sec) / 1000000000.0;
                 dprintf(1, "Finished at %ld, runtime duration %f\n", finish.tv_sec, elapsed);
-                if (elapsed <= 2) {
+                if (elapsed <= 2)
+                {
                     dprintf(2, "spawning too fast\n");
                 }
-                    // Restart Process if Time > 2s
-                else {
+                // Restart Process if Time > 2s
+                else
+                {
                     int id = fork();
                     // Child Process
-                    if (id == 0) {
+                    if (id == 0)
+                    {
                         // [] command Splitted By Space
-                        char *array[50];
+                        char *array[UTIL_MAX_LENGTH];
                         // Split command To Get List Of Arguments
                         int j = 0;
                         array[j] = strtok(node->comm, " ");
-                        while(array[j] != NULL) array[++j] = strtok(NULL, " ");
+                        while (array[j] != NULL)
+                            array[++j] = strtok(NULL, " ");
                         array[j] = NULL;
                         char out[25];
                         char err[25];
@@ -205,7 +262,8 @@ int main(int argc, char *argv[]) {
                         fprintf(stderr, "Unable to execute a command!\n");
                         return 2;
                     }
-                    else if (id > 0) {
+                    else if (id > 0)
+                    {
                         // Create a new node
                         Node *nextNode = malloc(sizeof(Node));
                         // Create Start Timestamp
@@ -220,29 +278,8 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+
+    FreeNodes(head);
+
     return 0;
-}
-
-// Find the node in the linkedlist by its pid
-Node *find(Node *head, int pid) {
-    Node *temp = head;
-    // Traverse Through List and Compare Each Node With PID
-    while (temp != NULL) {
-        if (temp->pid == pid){
-            return temp;
-        }
-
-        temp = temp->next;
-    }
-    return NULL;
-}
-
-void InitializeNode(Node *node, struct timespec time, int pid, int i, char *comm, Node *next) {
-    // Assign Values Passed To The Function - New Created Node
-    node->comm = malloc(50 * sizeof(char));
-    node->time = time;
-    node->pid = pid;
-    node->i = i;
-    strcpy(node->comm, comm);
-    node->next = next;
 }
