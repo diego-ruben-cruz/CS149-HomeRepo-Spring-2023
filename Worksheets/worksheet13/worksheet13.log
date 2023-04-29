@@ -1,0 +1,33 @@
+   75  rsync -arv /home/dcruz/Documents/APUE /home/dcruz/CS149/APUE
+   76  ls
+   77  pwd
+   78  rsync -arv /home/dcruz/Documents/APUE/ /home/dcruz/Documents/CS149/APUE/
+   79  cp -r /home/dcruz/Documents/APUE/ /home/dcruz/Documents/APUE2/
+   80  clear
+   81  cp -r /home/dcruz/Documents/APUE/ /home/dcruz/Documents/CS149/APUE2/
+   82  cd /home/dcruz/Documents/CS149/APUE/
+   83  ls -latr /home/dcruz/Documents/CS149/APUE/
+   84  ls -latr /home/dcruz/Documents/CS149/APUE2/
+   85  clear
+   86  cd /home/dcruz/Documents/GitHub/CS149-HomeRepo-Spring-2023/Worksheets/Worksheet13
+   87  mv Worksheet13 worksheet13
+   88  cd -
+   89  cd /home/dcruz/Documents/CS149/APUE/
+   90  ls -l
+   91  exit
+   92  pwd
+   93  cd apue.3e
+   94  cat README
+   95  cat DISCLAIMER
+   96  touch Make.defines.linux
+   97  cd -
+   98  mkdir newFolder
+   99  rmdir newFolder
+  100  locate sigusr.c
+  101  find -name sigusr.c
+  102  df
+  103  cop
+  104  top
+  105  ping duckduckgo.com
+  106  cd /home/dcruz/Documents/GitHub/CS149-HomeRepo-Spring-2023/Worksheets/worksheet13
+  107  history > worksheet13.log
