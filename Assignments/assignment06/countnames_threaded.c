@@ -1,8 +1,40 @@
+/**
+ * Description:
+ * Assume that you have several text file with a name on each line,
+ * and names are separated by newlines. Assume each row has one name (keep things simple) and a name can occur
+ * many times in the file. Assume you are dealing with up to 100 individual names (since you would need dynamic
+ * memory allocation for expanding an array to deal with more names, which we'll see later). You want to read the
+ * names in and count the occurrences of each. Since we want to be flexible on the type and size of characters we
+ * can handle, you can assume Ascii code and you expect a file to contain simple characters of Ascii values from
+ * 0-128. A name can be up to 30 characters long.
+ * You must be able to handle a file with any number of rows, including no names. It is ok if this is slow
+ * (since you would need dynamic data structures like hash tables to make it fast, which we'll see later). You can
+ * assume that the input file contains only valid characters and rows are separated by newlines; the input file may
+ * contain a few empty lines as well (which you will ignore).
+ *
+ * Author Names:
+ * Diego Cruz
+ * Saim Sheikh
+ *
+ * Author emails:
+ * diego.cruz@sjsu.edu
+ * saim.sheikh@sjsu.edu
+ *
+ * Last Modified: 03/06/2023
+ * Creation Date: 03/04/2023
+ *
+ * To compile with warnings and errors
+ * gcc -o countnames_parallel countnames_parallel.c -Wall -W
+ *
+ * To execute
+ * ./countnames_parallel.c names.txt names2.txt
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <stdbool.h>
+
 /*****************************************
 //CS149 SP23
 //Template for assignment 6
@@ -23,7 +55,8 @@ void *thread_runner(void *);
 pthread_t tid1, tid2;
 // struct points to the thread that created the object.
 // This is useful for you to know which is thread1. Later thread1 will also
-deallocate.struct THREADDATA_STRUCT
+// deallocate.
+struct THREADDATA_STRUCT
 {
     pthread_t creator;
 };
@@ -33,13 +66,10 @@ THREADDATA *p = NULL;
 int logindex = 0;
 int *logip = &logindex;
 // The name counts.
-//  You can use any data structure you like, here are 2 proposals: a linked list OR
-an array(up to 100 names).
-    // The linked list will be faster since you only need to lock one node, while for
-    the array you need to lock the whole array.
-    // You can use a linked list template from A5. You should also consider using a hash
-    table,
-    like in A5(even faster).struct NAME_STRUCT
+//  You can use any data structure you like, here are 2 proposals: a linked list OR an array(up to 100 names).
+// The linked list will be faster since you only need to lock one node, while for the array you need to lock the whole array.
+// You can use a linked list template from A5. You should also consider using a hash table,like in A5(even faster).
+struct NAME_STRUCT
 {
     char name[30];
     int count;
@@ -59,7 +89,8 @@ struct NAME_NODE
 int main()
 {
     // TODO similar interface as A2: give as command-line arguments three filenames of
-    numbers(the numbers in the files are newline - separated).printf("create first thread");
+    // numbers(the numbers in the files are newline - separated).
+    printf("create first thread");
     pthread_create(&tid1, NULL, thread_runner, NULL);
     printf("create second thread");
     pthread_create(&tid2, NULL, thread_runner, NULL);
