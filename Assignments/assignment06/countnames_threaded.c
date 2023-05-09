@@ -1,12 +1,14 @@
 /**
  * Description:
- * Assume that you have several text file with a name on each line,
- * and names are separated by newlines. Assume each row has one name (keep things simple) and a name can occur
- * many times in the file. Assume you are dealing with up to 100 individual names (since you would need dynamic
- * memory allocation for expanding an array to deal with more names, which we'll see later). You want to read the
- * names in and count the occurrences of each. Since we want to be flexible on the type and size of characters we
- * can handle, you can assume Ascii code and you expect a file to contain simple characters of Ascii values from
+ * Assume that you have several text file with a name on each line, and names are separated by newlines.
+ * Assume each row has one name (keep things simple) and a name can occur many times in the file.
+ * Assume you are dealing with up to 100 individual names (since you would need dynamic
+ * memory allocation for expanding an array to deal with more names, which we'll see later).
+ * You want to read the names in and count the occurrences of each.
+ * Since we want to be flexible on the type and size of characters we can handle,
+ * you can assume Ascii code and you expect a file to contain simple characters of Ascii values from
  * 0-128. A name can be up to 30 characters long.
+ *
  * You must be able to handle a file with any number of rows, including no names. It is ok if this is slow
  * (since you would need dynamic data structures like hash tables to make it fast, which we'll see later). You can
  * assume that the input file contains only valid characters and rows are separated by newlines; the input file may
@@ -20,14 +22,14 @@
  * diego.cruz@sjsu.edu
  * saim.sheikh@sjsu.edu
  *
- * Last Modified: 03/06/2023
- * Creation Date: 03/04/2023
+ * Last Modified: 05/10/2023
+ * Creation Date: 05/03/2023
  *
  * To compile with warnings and errors
- * gcc -o countnames_parallel countnames_parallel.c -Wall -W
+ * gcc -o countnames_threaded countnames_threaded.c -Wall -W
  *
  * To execute
- * ./countnames_parallel.c names.txt names2.txt
+ * ./countnames_threaded.c names1.txt names2.txt
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,12 +37,6 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-/*****************************************
-//CS149 SP23
-//Template for assignment 6
-//San Jose State University
-//originally prepared by Bill Andreopoulos
-*****************************************/
 // thread mutex lock for access to the log index
 // TODO you need to use this mutexlock for mutual exclusion
 // when you print log messages from each thread
@@ -74,6 +70,7 @@ struct NAME_STRUCT
     char name[30];
     int count;
 };
+
 typedef struct NAME_STRUCT THREAD_NAME;
 // array of 100 names
 THREAD_NAME names_counts[100];
@@ -83,9 +80,7 @@ struct NAME_NODE
     THREAD_NAME name_count;
     struct NAME_NODE *next;
 };
-/*********************************************************
-// function main
-*********************************************************/
+
 int main()
 {
     // TODO similar interface as A2: give as command-line arguments three filenames of
@@ -103,9 +98,7 @@ int main()
     // TODO print out the sum variable with the sum of all the numbers
     exit(0);
 } // end main
-/**********************************************************************
-// function thread_runner runs inside each thread
-**********************************************************************/
+
 void *thread_runner(void *x)
 {
     pthread_t me;
@@ -151,5 +144,4 @@ void *thread_runner(void *x)
     {
         printf("This is thread %ld and I can access the THREADDATA", me);
     }
-    //
 }
