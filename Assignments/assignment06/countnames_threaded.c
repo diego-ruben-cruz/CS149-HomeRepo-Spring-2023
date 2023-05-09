@@ -41,14 +41,18 @@
 // TODO you need to use this mutexlock for mutual exclusion
 // when you print log messages from each thread
 pthread_mutex_t tlock1 = PTHREAD_MUTEX_INITIALIZER;
+
 // thread mutex lock for critical sections of allocating THREADDATA
 // TODO you need to use this mutexlock for mutual exclusion
 pthread_mutex_t tlock2 = PTHREAD_MUTEX_INITIALIZER;
+
 // thread mutex lock for access to the name counts data structure
 // TODO you need to use this mutexlock for mutual exclusion
 pthread_mutex_t tlock3 = PTHREAD_MUTEX_INITIALIZER;
+
 void *thread_runner(void *);
 pthread_t tid1, tid2;
+
 // struct points to the thread that created the object.
 // This is useful for you to know which is thread1. Later thread1 will also
 // deallocate.
@@ -56,15 +60,17 @@ struct THREADDATA_STRUCT
 {
     pthread_t creator;
 };
+
 typedef struct THREADDATA_STRUCT THREADDATA;
 THREADDATA *p = NULL;
-// variable for indexing of messages by the logging function.
-int logindex = 0;
+
+int logindex = 0; // variable for indexing of messages by the logging function.
 int *logip = &logindex;
+
 // The name counts.
 //  You can use any data structure you like, here are 2 proposals: a linked list OR an array(up to 100 names).
 // The linked list will be faster since you only need to lock one node, while for the array you need to lock the whole array.
-// You can use a linked list template from A5. You should also consider using a hash table,like in A5(even faster).
+// You can use a linked list template from A5. You should also consider using a hash table, like in A5(even faster).
 struct NAME_STRUCT
 {
     char name[30];
@@ -74,6 +80,7 @@ struct NAME_STRUCT
 typedef struct NAME_STRUCT THREAD_NAME;
 // array of 100 names
 THREAD_NAME names_counts[100];
+
 // node with name_info for a linked list
 struct NAME_NODE
 {
