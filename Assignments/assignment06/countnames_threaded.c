@@ -29,7 +29,7 @@
  * gcc -o countnames_threaded countnames_threaded.c -Wall -W
  *
  * To execute
- * ./countnames_threaded.c names1.txt names2.txt
+ * ./countnames_threaded.c names.txt names2.txt
  *
  * To check for memleaks
  * valgrind --leak-check=full ./countnames_threaded.c names1.txt names2.txt
@@ -39,6 +39,8 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdbool.h>
+#include <time.h>
+#include <unistd.h>
 #define MAX_LENGTH 30 // Constant for length of string including nullchar
 #define MAX_LINES 100 // Constant for max number of lines in a given file
 #define MAX_ARGS 3    // Constant for the number of arguments expected from the command line
@@ -59,8 +61,9 @@ typedef struct nameNode
 {
     char name[MAX_LENGTH];
     int count;
-    struct nameNode next;
     pthread_mutex_t nodeLock;
+
+    struct nameNode *next;
 } nameNode;
 
 // ==================================================================
@@ -70,116 +73,224 @@ pthread_mutex_t tlock1 = PTHREAD_MUTEX_INITIALIZER; // thread mutex lock for acc
 pthread_mutex_t tlock2 = PTHREAD_MUTEX_INITIALIZER; // thread mutex lock for critical sections of allocating THREADDATA
 
 typedef struct THREADDATA_STRUCT THREADDATA;
-nameNode *name_counts = NULL; // Useful temp node for later
+nameNode *name_counts = NULL; // Useful dummy head node for later
 
 int logIndex = 0; // Log index, shared b/w threads
 
-/**
- * Function for each thread to run independently while the overall proc is running
- *
- * @param x
- */
-void *thread_runner(void *x)
+// =================================================================
+// Utility functions go here
+
+void timer()
 {
-    pthread_t me;
-    me = pthread_self();
-    printf("This is thread %ld (p=%p)", me, p); // Replace p with some form of getpid()
-    pthread_mutex_lock(&tlock2); // critical section starts
-    if (p == NULL)
+    int hours, minutes, seconds, day, month, year; // Utility variables for each timefield
+    time_t now;                                    // Utility temp variable to capture UNIX timestamp
+    time(&now);
+
+    struct tm *local = localtime(&now);
+
+    day = local->tm_mday;
+    month = local->tm_mon + 1;
+    year = local->tm_year + 1900;
+
+    hours = local->tm_hour;
+    minutes = local->tm_min;
+    seconds = local->tm_sec;
+
+    // PRINT Current Date
+    printf("Date => %02d/%02d/%d ",
+           day, month, year);
+
+    // PRINT Local Time
+    if (hours < 12) // Before Midday
+        printf("and time => %02d:%02d:%02d am: ",
+               hours, minutes, seconds);
+
+    else
+        printf("and time => %02d:%02d:%02d pm: ",
+               hours - 12, minutes, seconds);
+}
+
+// add_name and name_count To LinkedList
+void add_name(char *name, int count)
+{
+    // Acquire Lock
+    // Before Accessing LinkedList
+    pthread_mutex_lock(&(name_counts->nodeLock));
+
+    // Search Name In LinkedList
+    nameNode *current = name_counts;
+    while (current != NULL &&
+           strcmp(current->name, name) != 0)
     {
-        p = (THREADDATA *)malloc(sizeof(THREADDATA));
-        p->creator = me;
+        current = current->next;
     }
-    pthread_mutex_unlock(&tlock2); // critical section ends
-    if (p != NULL && p->creator == me)
+
+    if (current != NULL) // If the name is found, it will update count
     {
-        printf("This is thread %ld and I created THREADDATA %p", me, p);
+        current->count += count;
+    }
+    else // If the name is not found, it will create a new node and initialize count var
+    {
+        nameNode *new_node = malloc(sizeof(nameNode));
+        strcpy(new_node->name, name);
+        new_node->count = count;
+        new_node->next = name_counts;
+        name_counts = new_node;
+    }
+    // Release Lock
+    // After Accessing LinkedList
+    pthread_mutex_unlock(&(name_counts->nodeLock));
+}
+
+void FreeNodes(nameNode *refNode)
+{
+    if (refNode != NULL) // Quick check to see if not nullpointer
+    {
+        // Push Function To Stack
+        FreeNodes(refNode->next); // Recursive call to each node until the last one is called
+        free(refNode->name);      // frees memory allotted to the string inside the struct
+        pthread_mutex_destroy(&(refNode->nodeLock));
+        free(refNode); // frees mem occupied by rest of node
+    }
+}
+
+// PRINT name and name_counts In LinkedList
+void print_name_counts()
+{
+    // Acquire Lock
+    // Before Accessing LinkedList
+    pthread_mutex_lock(&(name_counts->nodeLock));
+    // PRINT name and name_counts In LinkedList
+    nameNode *current = name_counts;
+    while (current != NULL)
+    {
+        printf("%s: %d\n", current->name, current->count);
+        current = current->next;
+    }
+    // Release Lock
+    // After Accessing LinkedList
+    pthread_mutex_unlock(&(name_counts->nodeLock));
+}
+
+// Count Names In File
+void *count_names(void *data)
+{
+    // Get Thread ID & Filename
+    // From Thread Data
+    pthread_t thread_id = ((THREADDATA *)data)->threadID;
+    char *filename = ((THREADDATA *)data)->filename;
+    // Open File
+    FILE *file = fopen(filename, "r");
+    if (file == NULL)
+    {
+        fprintf(stderr, "Error opening file %s\n", filename);
+        return NULL;
+    }
+    // Log Messages
+    if ((data != NULL && ((THREADDATA *)data)->creator == thread_id))
+    {
+        printf("Log index %d, thread_id %ld, PID %d, ",
+               logIndex++, thread_id, getpid());
+        timer();
+        printf("This is thread %ld and I created THREADDATA %p\n",
+               thread_id, data);
     }
     else
     {
-        printf("This is thread %ld and I can access the THREADDATA %p", me, p);
+        printf("Log index %d, thread_id %ld, PID %d, ",
+               logIndex++, thread_id, getpid());
+        timer();
+        printf("This is thread %ld and I created THREADDATA %p\n",
+               thread_id, data);
+        if (thread_id == 1)
+        {
+            printf("Log index %d, thread_id %d, PID %d, ",
+                   logIndex++, 2, getpid());
+            timer();
+            printf("This is thread %d and I can access the THREADDATA %p\n",
+                   2, data);
+        }
+        else
+        {
+            printf("Log index %d, thread_id %d, PID %d, ",
+                   logIndex++, 1, getpid());
+            timer();
+            printf("This is thread %d and I can access the THREADDATA %p\n",
+                   1, data);
+        }
     }
-    /**
-     * //TODO implement any thread name counting functionality you need.
-     * Assign one file per thread. Hint: you can either pass each argv filename as a
-     * thread_runner argument from main.
-     * Or use the logIndex to index argv, since every thread will increment the
-     * logIndex anyway
-     * when it opens a file to print a log message (e.g. logIndex could also index argv)....
-     * Make sure to use any mutex locks appropriately
-     */
-
-    // We must use this line with a buffer string before
-    // inserting a name into the linked list to remove newlines
-    // currentLine[strcspn(currentLine, "\r\n")] = 0;
-
-    pthread_mutex_lock(&tlock2); // critical section starts
-    if (p != NULL && p->creator == me)
+    // If File Opened - Log
+    char log_message[100];
+    sprintf(log_message, "Log index %d, thread_id %ld, PID %d, ",
+            logIndex++, thread_id, getpid());
+    printf("%s", log_message);
+    timer();
+    printf("opened file %s\n", filename);
+    // Read Names
+    // From File & Add To LinkedList
+    char name[MAX_LENGTH];
+    while (fscanf(
+               file, "%s", name) == 1)
     {
-        printf("This is thread %ld and I delete THREADDATA", me);
-        pthread_mutex_lock(&tlock2);
-        free(p);
-        p = NULL;
-        // pthread_mutex_unlock(&tlock2);
+        add_name(name, 1);
     }
-    else
-    {
-        printf("This is thread %ld and I can access the THREADDATA", me);
-        // pthread_mutex_unlock(&tlock2);
-    }
-    pthread_mutex_unlock(&tlock2); // critical section ends
+    // Close File
+    fclose(file);
+    return NULL;
 }
 
 /**
  * Main function that takes in two files as arguments
  *
- * Expects to do
+ * Most functions will be called from the ones above:
  *
  */
 int main(int argc, char *argv[])
 {
-    int fd[2]; // file descriptor integration
-
-    if (argc != MAX_ARGS) // Check if two files are provided
+    // Check If
+    // Two Files Provided
+    if (argc != 3)
     {
         fprintf(stderr, "Usage: %s <file1> <file2>\n", argv[0]);
         return 1;
     }
+    // Initialize Lock
+    pthread_mutex_init(&tlock2, NULL);
 
-    FILE *file1 = fopen(argv[1], "r"); // Opens a file from the specified arguments, configured to readonly
-    if (!file1)                        // Essentially throws an error if the filename does not exist within the directory
-    {
-        printf("Unable to open specified file\n");
-        return -1;
-    }
+    // Create Thread Data Structures
+    THREADDATA thread_one_data;
+    thread_one_data.threadID = 1;
+    thread_one_data.filename = argv[1];
 
-    FILE *file2 = fopen(argv[2], "r"); // Opens a file from the specified arguments, configured to readonly
-    if (!file2)                        // Essentially throws an error if the filename does not exist within the directory
-    {
-        printf("Unable to open specified file\n");
-        return -1;
-    }
+    THREADDATA thread_two_data;
+    thread_two_data.threadID = 2;
+    thread_two_data.filename = argv[2];
 
-    // TODO similar interface as A2: give as command-line arguments two filenames of
-    // numbers(the numbers in the files are newline - separated).
-    printf("create first thread");
-    pthread_create(&tid1, NULL, thread_runner, NULL); // DC Note: Replace tid with one provided by thread struct
+    // Create Threads
+    printf("=============== Log Messages ===============\n");
+    pthread_t thread_one, thread_two;
+    printf("create first thread\n");
+    pthread_create(&thread_one, NULL,
+                   count_names, &thread_one_data);
+    printf("create second thread\n");
+    pthread_create(&thread_two, NULL,
+                   count_names, &thread_two_data);
 
-    printf("create second thread");
-    pthread_create(&tid2, NULL, thread_runner, NULL); // DC Note: Replace tid with one provided by thread struct
+    // Wait For Threads To Finish
 
-    printf("wait for first thread to exit");
-    pthread_join(tid1, NULL);
-    printf("first thread exited");
+    // printf("WAIT FOR FIRST THREAD TO EXIT\n");
+    pthread_join(thread_one, NULL);
+    printf("first thread exited\n");
+    // printf("WAIT FOR SECOND THREAD TO EXIT\n");
+    pthread_join(thread_two, NULL);
+    printf("second thread exited\n");
 
-    printf("wait for second thread to exit");
-    pthread_join(tid2, NULL);
-    printf("second thread exited");
-    // TODO print out the sum variable with the sum of all the numbers
-
-    fclose(file1);
-    fclose(file2);
-
-    close(fd[0]);
-    exit(0);
-} // end main
+    // PRINT name_counts
+    printf("=============== Name Counts ===============\n");
+    print_name_counts();
+    // Destroy Lock
+    pthread_mutex_destroy(&tlock1);
+    pthread_mutex_destroy(&tlock2);
+    FreeNodes(name_counts->next);
+    return 0;
+}
