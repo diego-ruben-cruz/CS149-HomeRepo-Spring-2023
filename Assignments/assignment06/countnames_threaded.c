@@ -29,10 +29,10 @@
  * gcc -o countnames_threaded countnames_threaded.c -Wall -W
  *
  * To execute
- * ./countnames_threaded.c names.txt names2.txt
+ * ./countnames_threaded names.txt names2.txt
  *
  * To check for memleaks
- * valgrind --leak-check=full ./countnames_threaded.c names1.txt names2.txt
+ * valgrind --leak-check=full ./countnames_threaded names.txt names2.txt
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,19 +51,18 @@
 // Contains data that should be known about a thread
 struct THREADDATA_STRUCT
 {
-    pthread_t threadID;
-    char *filename;
-    pthread_t creator;
+    pthread_t threadID; // Basic threadID holding var, arbitrarily set by programmer
+    char *filename;     // Which file the thread is working on
+    pthread_t creator;  // The procID of the parent process of the thread
 };
 
 // Linked List for each name, count will get updated, features its own lock for access
 typedef struct nameNode
 {
-    char name[MAX_LENGTH];
-    int count;
-    pthread_mutex_t nodeLock;
+    char name[MAX_LENGTH]; // Name string
+    int count;             // Updates on repeated occurrences
 
-    struct nameNode *next;
+    struct nameNode *next; // Pointer to the next name
 } nameNode;
 
 // ==================================================================
@@ -71,9 +70,10 @@ typedef struct nameNode
 
 pthread_mutex_t tlock1 = PTHREAD_MUTEX_INITIALIZER; // thread mutex lock for access to the log index
 pthread_mutex_t tlock2 = PTHREAD_MUTEX_INITIALIZER; // thread mutex lock for critical sections of allocating THREADDATA
+pthread_mutex_t tlock3 = PTHREAD_MUTEX_INITIALIZER; // thread mutex lock when accessing name_counts
 
 typedef struct THREADDATA_STRUCT THREADDATA;
-nameNode *name_counts = NULL; // Useful dummy head node for later
+nameNode *name_counts = NULL;
 
 int logIndex = 0; // Log index, shared b/w threads
 
@@ -86,22 +86,24 @@ void timer()
     time_t now;                                    // Utility temp variable to capture UNIX timestamp
     time(&now);
 
-    struct tm *local = localtime(&now);
+    struct tm *local = localtime(&now); // Captures time of local machine, means that it will not sync to servers
 
+    // Running date conversions from UNIX to human-readable format
     day = local->tm_mday;
     month = local->tm_mon + 1;
     year = local->tm_year + 1900;
 
+    // Running time conversions from UNIX to human-readable format
     hours = local->tm_hour;
     minutes = local->tm_min;
     seconds = local->tm_sec;
 
-    // PRINT Current Date
+    // print local date
     printf("Date => %02d/%02d/%d ",
            day, month, year);
 
-    // PRINT Local Time
-    if (hours < 12) // Before Midday
+    // print local time
+    if (hours < 12) // Before Noon
         printf("and time => %02d:%02d:%02d am: ",
                hours, minutes, seconds);
 
@@ -115,7 +117,7 @@ void add_name(char *name, int count)
 {
     // Acquire Lock
     // Before Accessing LinkedList
-    pthread_mutex_lock(&(name_counts->nodeLock));
+    pthread_mutex_lock(&tlock3);
 
     // Search Name In LinkedList
     nameNode *current = name_counts;
@@ -137,56 +139,52 @@ void add_name(char *name, int count)
         new_node->next = name_counts;
         name_counts = new_node;
     }
-    // Release Lock
-    // After Accessing LinkedList
-    pthread_mutex_unlock(&(name_counts->nodeLock));
+    // Release Lock after accessing LinkedList
+    pthread_mutex_unlock(&tlock3);
 }
 
+// Utility function to free linked list to avoid memleaks
 void FreeNodes(nameNode *refNode)
 {
     if (refNode != NULL) // Quick check to see if not nullpointer
     {
-        // Push Function To Stack
         FreeNodes(refNode->next); // Recursive call to each node until the last one is called
-        free(refNode->name);      // frees memory allotted to the string inside the struct
-        pthread_mutex_destroy(&(refNode->nodeLock));
-        free(refNode); // frees mem occupied by rest of node
+        free(refNode);            // frees mem occupied by node
     }
 }
 
-// PRINT name and name_counts In LinkedList
+// Print the name and name_counts in the list
 void print_name_counts()
 {
-    // Acquire Lock
-    // Before Accessing LinkedList
-    pthread_mutex_lock(&(name_counts->nodeLock));
-    // PRINT name and name_counts In LinkedList
+    // Acquire lock before accessing list
+    pthread_mutex_lock(&tlock3);
+
+    // Iterate thru list and print formatted output of name count
     nameNode *current = name_counts;
     while (current != NULL)
     {
         printf("%s: %d\n", current->name, current->count);
         current = current->next;
     }
-    // Release Lock
-    // After Accessing LinkedList
-    pthread_mutex_unlock(&(name_counts->nodeLock));
+    // Release lock after accessing list
+    pthread_mutex_unlock(&tlock3);
 }
 
-// Count Names In File
+// Count names in file
 void *count_names(void *data)
 {
-    // Get Thread ID & Filename
-    // From Thread Data
+    // Get threadID and filename from ThreadData
     pthread_t thread_id = ((THREADDATA *)data)->threadID;
     char *filename = ((THREADDATA *)data)->filename;
-    // Open File
+
+    // Open the file
     FILE *file = fopen(filename, "r");
     if (file == NULL)
     {
         fprintf(stderr, "Error opening file %s\n", filename);
         return NULL;
     }
-    // Log Messages
+    // Creation of log message, does not end the line, handles empty data and per-thread paths
     if ((data != NULL && ((THREADDATA *)data)->creator == thread_id))
     {
         printf("Log index %d, thread_id %ld, PID %d, ",
@@ -219,22 +217,26 @@ void *count_names(void *data)
                    1, data);
         }
     }
-    // If File Opened - Log
+    // If fopen sucess => log message
     char log_message[100];
     sprintf(log_message, "Log index %d, thread_id %ld, PID %d, ",
             logIndex++, thread_id, getpid());
     printf("%s", log_message);
     timer();
     printf("opened file %s\n", filename);
-    // Read Names
-    // From File & Add To LinkedList
+    
+    // Read names from file and add to list on case-by-case basis
     char name[MAX_LENGTH];
-    while (fscanf(
-               file, "%s", name) == 1)
+    while (fgets(name, MAX_LENGTH, file) != NULL)
     {
-        add_name(name, 1);
+        name[strcspn(name, "\r\n")] = '\0';
+        if (strlen(name) != 0)
+        {
+            add_name(name, 1);
+        }
     }
-    // Close File
+
+    // Close file
     fclose(file);
     return NULL;
 }
@@ -242,19 +244,17 @@ void *count_names(void *data)
 /**
  * Main function that takes in two files as arguments
  *
- * Most functions will be called from the ones above:
- *
+ * Most functions will be called from the ones above.
  */
 int main(int argc, char *argv[])
 {
-    // Check If
-    // Two Files Provided
+    // Check if two files were provided
     if (argc != 3)
     {
         fprintf(stderr, "Usage: %s <file1> <file2>\n", argv[0]);
         return 1;
     }
-    // Initialize Lock
+    // init Lock 2
     pthread_mutex_init(&tlock2, NULL);
 
     // Create Thread Data Structures
@@ -277,20 +277,20 @@ int main(int argc, char *argv[])
                    count_names, &thread_two_data);
 
     // Wait For Threads To Finish
-
-    // printf("WAIT FOR FIRST THREAD TO EXIT\n");
     pthread_join(thread_one, NULL);
     printf("first thread exited\n");
-    // printf("WAIT FOR SECOND THREAD TO EXIT\n");
     pthread_join(thread_two, NULL);
     printf("second thread exited\n");
 
     // PRINT name_counts
     printf("=============== Name Counts ===============\n");
     print_name_counts();
+    
     // Destroy Lock
     pthread_mutex_destroy(&tlock1);
     pthread_mutex_destroy(&tlock2);
-    FreeNodes(name_counts->next);
+    pthread_mutex_destroy(&tlock3);
+
+    FreeNodes(name_counts); // This is the only free that is necessary to sucessfully dealloc total memory.
     return 0;
 }
